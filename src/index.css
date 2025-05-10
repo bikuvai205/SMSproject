@@ -1,25 +1,4 @@
 @import "tailwindcss";
 :root {
-<<<<<<< HEAD
   --breakpoint-xl: 100rem;
 }
-=======
-  /* Primary Theme Colors */
-  --color-bg-dark: #0D1117;
-  --color-primary: #2563EB;       /* Vivid Blue */
-  --color-primary-dark: #1E40AF;  /* Deeper Blue variant */
-
-  /* Text Colors */
-  --color-text-light: #F9FAFB;
-  --color-text-muted: #9CA3AF;
-
-  /* Border and UI Elements */
-  --color-border: #334155;       /* Slate Gray */
-  --color-hover-bg: #E0F2FE;     /* Light Blue Gray */
-
-  /* Status Colors */
-  --color-success: #10B981;      /* Emerald Green */
-  --color-warning: #F59E0B;      /* Amber */
-  --color-danger: #EF4444;       /* Rose Red */
-}
->>>>>>> 6766ce334a55bcef57bbea4d75a7d09ce73c31b8
