@@ -26,11 +26,7 @@ function App() {
         </p>
       </div>
       <p className="read-the-docs">
-<<<<<<< HEAD
-        Click on the Vite and React logo to learn more about Dinesh Kharel
-=======
         Click on the Vite and React logo to learn more Wauuuu
->>>>>>> b72e0f77cfb9e79bbf6edfd699587975897c6013
       </p>
     </>
   )
