@@ -1,22 +1,73 @@
 import React from "react";
-import Background from "../assets/image/HeroSection.png";
+
 const Herosection = () => {
    return (
-    <section class="bg-white dark:bg-gray-900">
-    <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-        <div class="mr-auto place-self-center lg:col-span-7">
-            <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">Adhyanam</h1>
-            <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">Adhyanam is a smart student management system designed to help schools and colleges streamline admissions, attendance, grades, and communication — all in one platform.</p>
-            <a href="#" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">
-                Get started
-                <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+   
+ <div className="relative isolate overflow-hidden bg-gray-900" style={{ height: "100vh" }}>
+      <svg
+        className="absolute inset-0 -z-10 h-full w-full stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+        aria-hidden="true"
+      >
+        <defs>
+          <pattern
+            id="pattern"
+            width="200"
+            height="200"
+            x="100%"
+            y="-1"
+            patternUnits="userSpaceOnUse"
+          >
+            <path d="M.5 200V.5H200" fill="none" />
+          </pattern>
+        </defs>
+        <rect
+          width="100%"
+          height="100%"
+          strokeWidth="0"
+          fill="url(#pattern)"
+        />
+      </svg>
+
+      <div
+        className="absolute left-[calc(50%-4rem)] top-10 -z-10 transform-gpu blur-3xl sm:left-[calc(50%-18rem)] lg:left-48 lg:top-[calc(50%-30rem)] xl:left-[calc(50%-24rem)]"
+        aria-hidden="true"
+      >
+        <div
+          className="aspect-[1108/632] w-[69.25rem] bg-gradient-to-r from-[#80caff] to-[#4f46e5] opacity-20"
+          style={{
+            clipPath:
+              'polygon(73.6% 51.7%, 91.7% 11.8%, 100% 46.4%, 97.4% 82.2%, 92.5% 84.9%, 75.7% 64%, 55.3% 47.5%, 46.5% 49.4%, 45% 62.9%, 50.3% 87.2%, 21.3% 64.1%, 0.1% 100%, 5.4% 51.1%, 21.4% 63.9%, 58.9% 0.2%, 73.6% 51.7%)',
+          }}
+        />
+      </div>
+
+      <div className="mt-[-50px] flex h-screen items-center justify-center">
+        <div className="max-w-full flex-shrink-0 px-4 text-center lg:mx-0 lg:max-w-4xl lg:pt-8">
+          <h1 className="mt-10 text-5xl font-bold tracking-tight text-white sm:text-6xl">
+            Adhyanam:{' '}
+            <span className="text-blue-700">Smarter Student Management</span>
+           {''} System
+          </h1>
+          <br />
+         
+          <p className="mt-6 text-2xl leading-8 text-gray-300">
+           Adhyanam is a modern web-based student management system designed for simplifying academic administration. From attendance tracking to smart communication and performance monitoring, Adhyanam empowers institutions with a streamlined, user-friendly platform for both students and staff.
+          </p>
+          <br />
+          
+          <div className="mt-5 flex items-center justify-center gap-x-6">
+            <a
+              href="/register"
+              className="rounded-md bg-blue-700 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+              rel="noreferrer"
+            >
+              Get Started →
             </a>
+          </div>
         </div>
-        <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-            <img src={Background} alt="SMS"/>
-        </div>                
+      </div>
     </div>
-</section>
+   
  
   );
 };
