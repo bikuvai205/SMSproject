@@ -12,7 +12,7 @@ const Navbar = () => {
         >
           <img
             src={logo}
-            className="h-12"
+            className="h-11 "
             alt="Adhyanam Logo"
           />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
