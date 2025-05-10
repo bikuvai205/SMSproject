@@ -1,21 +1,17 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () =>{
+ 
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    
+    
+     < div className="bg-blue-500 text-white p-4">
+        <h1 className="text-2xl font-bold">Hello, World!</h1>
+        <p className="mt-2">This is a simple React app with Tailwind CSS.</p>
       </div>
+<<<<<<< HEAD
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
@@ -32,6 +28,9 @@ function App() {
      
 >>>>>>> 0b146fa19f16c72777ec43e16c99fa213dbda48a
       </p>
+=======
+      
+>>>>>>> fa129cde9c5b767aa894c280204b7a288188b22d
     </>
   )
 }
