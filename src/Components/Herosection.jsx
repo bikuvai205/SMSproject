@@ -3,7 +3,7 @@ import React from "react";
 const Herosection = () => {
    return (
    
- <div className="relative isolate overflow-hidden bg-gray-900" style={{ height: "100vh" }}>
+ <div className="relative isolate overflow-hidden bg-gray-900 border-d border-silver-700 pt-6" style={{ height: "100vh" }}>
       <svg
         className="absolute inset-0 -z-10 h-full w-full stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
         aria-hidden="true"
