@@ -1,5 +1,7 @@
-import React from 'react'
+import React from "react";
+import LandingPage from "./Webpages/LandingPage";
 
+<<<<<<< HEAD
 const App = () =>{
  
 
@@ -12,6 +14,11 @@ const App = () =>{
 
     </>
   )
+=======
+function App() {
+  return <LandingPage />;
+>>>>>>> f90f496b7d96cc78d22166476911d6b83ee7b15d
 }
 
-export default App
+export default App;
+// This code defines the main App component for a React application.
