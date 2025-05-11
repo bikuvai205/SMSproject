@@ -1,9 +1,9 @@
 import React from "react";
 
 const Herosection = () => {
-   return (
-   
- <div className="relative isolate overflow-hidden bg-gray-900 border-d border-silver-700 pt-6" style={{ height: "100vh" }}>
+  return (
+    <div className="relative isolate overflow-hidden bg-gray-900 pt-24 min-h-screen flex flex-col justify-between">
+      {/* Background SVG */}
       <svg
         className="absolute inset-0 -z-10 h-full w-full stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
         aria-hidden="true"
@@ -20,14 +20,10 @@ const Herosection = () => {
             <path d="M.5 200V.5H200" fill="none" />
           </pattern>
         </defs>
-        <rect
-          width="100%"
-          height="100%"
-          strokeWidth="0"
-          fill="url(#pattern)"
-        />
+        <rect width="100%" height="100%" strokeWidth="0" fill="url(#pattern)" />
       </svg>
 
+      {/* Gradient Blur Shape */}
       <div
         className="absolute left-[calc(50%-4rem)] top-10 -z-10 transform-gpu blur-3xl sm:left-[calc(50%-18rem)] lg:left-48 lg:top-[calc(50%-30rem)] xl:left-[calc(50%-24rem)]"
         aria-hidden="true"
@@ -41,34 +37,36 @@ const Herosection = () => {
         />
       </div>
 
-      <div className="mt-[-50px] flex h-screen items-center justify-center">
-        <div className="max-w-full flex-shrink-0 px-4 text-center lg:mx-0 lg:max-w-4xl lg:pt-8">
-          <h1 className="mt-10 text-5xl font-bold tracking-tight text-white sm:text-6xl">
-            Adhyanam:{' '}
-            <span className="text-blue-700">Smarter Student Management</span>
-           {''} System
+      {/* Hero Content */}
+      <div className="flex-grow flex items-center justify-center px-4 text-center">
+        <div className="max-w-4xl">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
+            Adhyanam:{" "}
+            <span className="text-blue-700">Smarter Student Management</span>{" "}
+            System
           </h1>
-          <br />
-         
-          <p className="mt-6 text-2xl leading-8 text-gray-300">
-           Adhyanam is a modern web-based student management system designed for simplifying academic administration. From attendance tracking to smart communication and performance monitoring, Adhyanam empowers institutions with a streamlined, user-friendly platform for both students and staff.
+
+          <p className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed text-gray-300">
+            Adhyanam is a modern web-based student management system designed for
+            simplifying academic administration. From attendance tracking to smart
+            communication and performance monitoring, Adhyanam empowers
+            institutions with a streamlined, user-friendly platform for both
+            students and staff.
           </p>
-          <br />
-          
-          <div className="mt-5 flex items-center justify-center gap-x-6">
-            <a
-              href="/register"
-              className="rounded-md bg-blue-700 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
-              rel="noreferrer"
-            >
-              Get Started →
-            </a>
-          </div>
         </div>
       </div>
+
+      {/* Call to Action */}
+      <div className="pb-10 flex justify-center">
+        <a
+          href="/register"
+          className="rounded-md bg-blue-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+        >
+          Get Started →
+        </a>
+      </div>
+      <div className="w-full h-[1px] bg-gray-400" />
     </div>
-   
- 
   );
 };
 
