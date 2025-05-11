@@ -7,10 +7,7 @@ const LandingPage = () => {
   return (
     <div>
       <Navbar />
-      
       <Herosection/>
-      <hr />
-      <hr />
       <Features/>
       
     </div>
