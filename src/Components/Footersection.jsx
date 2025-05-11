@@ -23,22 +23,22 @@ const Footersection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div>
             {/* <h4 className="font-semibold mb-4">School Info</h4> */}
-            <ul className="space-y-2 text-gray-300">
+            <ul className="space-y-2 text-center text-gray-300">
               <li><a href="/home" className="hover:underline">Home</a></li>
               <li><a href="/about" className="hover:underline">About</a></li>
               <li><a href="/faculty" className="hover:underline">Features</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4"><b>Quick Links:</b></h4>
-            <ul className="space-y-2 text-gray-300">
+            <h4 className="font-semibold text-center mb-4"><b>Quick Links:</b></h4>
+            <ul className="space-y-2 text-center text-gray-300">
               <li><a href="/calendar" className="hover:underline">Login</a></li>
               <li><a href="/notices" className="hover:underline">Notices</a></li>
               <li><a href="/contact" className="hover:underline">Contact Us</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Follow Us</h4>
+            <h4 className="font-semibold mb-4"><b>Follow Us:</b></h4>
            <div className="flex space-x-4">
   <a
     href="https://facebook.com/YourSchoolPage"
