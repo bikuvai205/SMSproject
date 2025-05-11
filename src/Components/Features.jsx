@@ -44,19 +44,31 @@ const Features = () => {
   return (
     <div className="mx-auto px-5 py-16 md:px-10 md:py-16 bg-gradient-to-b from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="mx-auto w-full max-w-3xl text-center">
-        <h2 className="text-4xl font-extrabold text-blue-900 dark:text-white md:text-5xl">
+        <motion.h2
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: false, amount: 0.6 }}
+          className="text-4xl font-extrabold text-blue-900 dark:text-white md:text-5xl"
+        >
           Adhyanam <span className="text-blue-700">Features</span>
-        </h2>
-        <div className="mx-auto mb-8 mt-4 max-w-[528px] md:mb-12 lg:mb-16">
+        </motion.h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: false, amount: 0.6 }}
+          className="mx-auto mb-8 mt-4 max-w-[528px] md:mb-12 lg:mb-16"
+        >
           <p className="text-lg text-blue-700 dark:text-gray-300">
             Adhyanam provides all-in-one tools to help schools and colleges manage academic, administrative, and communication tasks efficiently.
           </p>
-        </div>
+        </motion.div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:grid-cols-3 lg:gap-12">
         {featuresList.map((feature, index) => {
-          const direction = index % 2 === 0 ? -50 : 50; // alternate slide direction
+          const direction = index % 2 === 0 ? -50 : 50;
 
           return (
             <motion.div
