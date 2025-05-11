@@ -24,6 +24,7 @@ const Features = () => {
         Automate repetitive tasks with NeuroGraph's intuitive and intelligent task manager.
       </p>
     </div>
+    
   
     <div class="relative mb-8 flex flex-col rounded-2xl border border-blue-300 bg-white p-8 shadow-lg dark:border-gray-600 dark:bg-gray-800 lg:mb-4">
       <div class="absolute -top-8 right-4 flex h-16 w-16 items-center justify-center rounded-full border border-blue-400 bg-blue-100 shadow-md dark:border-gray-500 dark:bg-gray-700 lg:right-8">
