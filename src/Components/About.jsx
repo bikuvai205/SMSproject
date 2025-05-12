@@ -44,7 +44,7 @@ const team = [
 
 const About = () => {
   return (
-    <div className="relative isolate overflow-hidden bg-white dark:bg-gray-900 py-20 px-5 sm:px-10 md:px-20">
+    <div className="relative isolate overflow-hidden bg-white dark:bg-gray-900 py-20 px-5 sm:px-10 md:px-20 border-b border-gray-700">
       
       {/* Heading */}
       <motion.h2
