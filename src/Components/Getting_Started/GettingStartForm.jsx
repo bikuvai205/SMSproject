@@ -1,71 +1,92 @@
-import React, { useState } from 'react';
+import React from "react";
 
 const GettingStartForm = () => {
- 
-
-  
-
   return (
-    <>
-    <div className="flex">
-      <section class="bg-gray-50 dark:bg-gray-900">
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      
-      <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                  Create an account
-              </h1>
-              <form class="space-y-4 md:space-y-6" action="#">
-                  <div>
-                      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                      <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required=""/>
-                  </div>
-                  <div>
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                      <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""/>
-                  </div>
-                  <div>
-                      <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
-                      <input type="confirm-password" name="confirm-password" id="confirm-password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""/>
-                  </div>
-              </form>
-          </div>
-      </div>
-  </div>
-</section>
-<section class="bg-gray-50 dark:bg-gray-900">
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-    
-      <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                  Create an account
-              </h1>
-              <form class="space-y-4 md:space-y-6" action="#">
-                  <div>
-                      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                      <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required=""/>
-                  </div>
-                  <div>
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                      <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""/>
-                  </div>
-                  <div>
-                      <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
-                      <input type="confirm-password" name="confirm-password" id="confirm-password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""/>
-                  </div>
-                  
-              </form>
-          </div>
-      </div>
-  </div>
-</section>
+    <div className="w-full px-4 py-12 bg-gray-900 text-white">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Individual Registration */}
+        <div className="bg-gray-800 p-8 rounded-2xl shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-yellow-500">For Individual</h2>
+          <form className="space-y-4">
+            <div>
+              <label className="block mb-1 text-sm">Full Name</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm">Email</label>
+              <input
+                type="email"
+                className="w-full px-4 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="name@example.com"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm">Password</label>
+              <input
+                type="password"
+                className="w-full px-4 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md hover:bg-yellow-400"
+            >
+              Register as Individual
+            </button>
+          </form>
+        </div>
 
+        {/* Institution Registration */}
+        <div className="bg-gray-800 p-8 rounded-2xl shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-yellow-500">For Institution</h2>
+          <form className="space-y-4">
+            <div>
+              <label className="block mb-1 text-sm">Institution Name</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="ABC School"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm">Email</label>
+              <input
+                type="email"
+                className="w-full px-4 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="info@abcschool.com"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm">Registration ID</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="INST-123456"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm">Password</label>
+              <input
+                type="password"
+                className="w-full px-4 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md hover:bg-yellow-400"
+            >
+              Register Institution
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
-    
-    </>
-   
   );
 };
 

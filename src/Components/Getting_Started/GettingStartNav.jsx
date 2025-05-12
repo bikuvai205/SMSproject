@@ -18,7 +18,7 @@ const GettingStartNav = () => {
           href="/"
           className="text-blue-600 hover:underline font-medium text-sm"
         >
-          Go Back to Home
+          &lt;&lt; Go Back to Home
         </a>
       </div>
     </nav>
