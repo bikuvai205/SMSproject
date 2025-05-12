@@ -1,48 +1,55 @@
 import React from "react";
 import { motion } from "framer-motion";
+import bikash from "../assets/image/bikash.png";
+import dinesh from "../assets/image/dinesh.png";
+import prajjwal from "../assets/image/prajjwal.png";
 
-// Reusable motion variant
-const fadeVariant = (direction = "up", delay = 0) => {
-  const y = direction === "up" ? 40 : -40;
-  return {
-    initial: { opacity: 0, y },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: false, amount: 0.3 },
-    transition: { duration: 1, ease: "easeOut", delay },
-  };
-};
+// Reusable slide-in and fade-in variants for text
+const slideFadeVariant = (direction = "top", delay = 0) => ({
+  initial: { opacity: 0, y: direction === "top" ? -50 : 50 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: false, amount: 0.3 },
+  transition: { duration: 1, ease: "easeOut", delay },
+});
 
-// Team Data
+// Simple fade-in variant for profile cards
+const fadeInVariant = (delay = 0) => ({
+  initial: { opacity: 0 },
+  whileInView: { opacity: 1 },
+  viewport: { once: false, amount: 0.3 },
+  transition: { duration: 1, ease: "easeOut", delay },
+});
+
+// Developer Data
 const team = [
   {
-    name: "Developer 1",
+    name: "Bikash Timalsina",
     role: "Full-Stack Learner",
     desc: "Exploring both frontend & backend with a passion for clean, practical systems.",
-    image: "https://via.placeholder.com/150",
+    image: bikash,
   },
   {
-    name: "Developer 2",
+    name: "Dinesh Kharel",
     role: "Frontend Enthusiast",
     desc: "Loves building intuitive interfaces and improving user experience.",
-    image: "https://via.placeholder.com/150",
+    image: dinesh,
   },
   {
-    name: "Developer 3",
+    name: "Prajjwal Koirala",
     role: "Backend Explorer",
     desc: "Focused on logic, databases, and making systems reliable and scalable.",
-    image: "https://via.placeholder.com/150",
+    image: prajjwal,
   },
 ];
 
 const About = () => {
   return (
     <div className="relative isolate overflow-hidden bg-white dark:bg-gray-900 py-20 px-5 sm:px-10 md:px-20">
-        
-        
+      
       {/* Heading */}
       <motion.h2
         className="text-4xl sm:text-5xl font-bold text-blue-900 dark:text-white text-center"
-        {...fadeVariant("down", 0)}
+        {...slideFadeVariant("top", 0)}
       >
         About <span className="text-blue-700">Us</span>
       </motion.h2>
@@ -50,7 +57,7 @@ const About = () => {
       {/* Paragraphs */}
       <motion.div
         className="max-w-4xl mx-auto text-center mt-6"
-        {...fadeVariant("up", 0.2)}
+        {...slideFadeVariant("bottom", 0.1)}
       >
         <p className="text-lg text-blue-700 dark:text-gray-300 leading-relaxed">
           Adhyanam — derived from Sanskrit, meaning 'study' — is a modern student management platform created by a team of three passionate student developers. While our core mission is to help institutions manage student information efficiently, our broader vision is to enhance the overall study environment with technology-driven tools like attendance tracking, grading systems, and performance insights.
@@ -66,7 +73,7 @@ const About = () => {
           <motion.div
             key={idx}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-blue-200 dark:border-gray-700 p-6 text-center hover:shadow-xl transition-all duration-300"
-            {...fadeVariant("up", idx * 0.2 + 0.4)}
+            {...fadeInVariant(idx * 0.1 + 0.1)}
           >
             <img
               src={member.image}
@@ -80,8 +87,7 @@ const About = () => {
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{member.desc}</p>
           </motion.div>
         ))}
-      </div> 
-     
+      </div>
     </div>
   );
 };

@@ -2,3 +2,6 @@
 :root {
   --breakpoint-xl: 100rem;
 }
+html {
+  scroll-behavior: smooth;
+}
