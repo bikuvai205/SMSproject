@@ -1,11 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
-import UI from "../assets/image/UI.png";
-import Role from "../assets/image/Roles.png";
-import Add from "../assets/image/Enroll.png";
-import Attend from "../assets/image/Attendance.png";
-import Result from "../assets/image/Result.png";
-import Notice from "../assets/image/Notice.png";
+import UI from "../../assets/image/UI.png";
+import Role from "../../assets/image/Roles.png";
+import Add from "../../assets/image/Enroll.png";
+import Attend from "../../assets/image/Attendance.png";
+import Result from "../../assets/image/Result.png";
+import Notice from "../../assets/image/Notice.png";
 
 const Features = () => {
   const featuresList = [

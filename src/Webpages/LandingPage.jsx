@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import Navbar from "../Components/Navbar";
-import Herosection from "../Components/Herosection";
-import Features from "../Components/Features";
-import About from "../Components/About";
-import Footersection from "../Components/Footersection";
+import Navbar from "../Components/Landing/Navbar";
+import Herosection from "../Components/Landing/Herosection";
+import Features from "../Components/Landing/Features";
+import About from "../Components/Landing/About";
+import Footersection from "../Components/Landing/Footersection";
 
 const LandingPage = () => {
   const [activeSection, setActiveSection] = useState("home");

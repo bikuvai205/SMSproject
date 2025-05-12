@@ -1,8 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import bikash from "../assets/image/bikash.png";
-import dinesh from "../assets/image/dinesh.png";
-import prajjwal from "../assets/image/prajjwal.png";
+import bikash from "../../assets/image/bikash.png";
+import dinesh from "../../assets/image/dinesh.png";
+import prajjwal from "../../assets/image/prajjwal.png";
 
 // Reusable slide-in and fade-in variants for text
 const slideFadeVariant = (direction = "top", delay = 0) => ({

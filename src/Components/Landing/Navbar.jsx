@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/image/logos.png";
+import logo from "../../assets/image/logos.png";
 
 const Navbar = ({ activeSection, scrollToSection }) => {
   const [isOpen, setIsOpen] = useState(false);
