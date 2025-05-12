@@ -42,7 +42,7 @@ const Features = () => {
   ];
 
   return (
-    <div className=" overflow-x-hidden  px-5 py-16 md:px-10 md:py-16 bg-gradient-to-b from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className=" overflow-x-hidden  px-5 py-16 md:px-10 md:py-16 bg-gradient-to-b from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border-b border-gray-700 " >
       <div className="mx-auto w-full max-w-3xl text-center">
         <motion.h2
           initial={{ opacity: 0, y: -30 }}
@@ -96,7 +96,10 @@ const Features = () => {
           );
         })}
       </div>
+       
     </div>
+    
+
   );
 };
 

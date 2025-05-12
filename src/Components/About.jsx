@@ -38,6 +38,7 @@ const About = () => {
   return (
     <div className="relative isolate overflow-hidden bg-white dark:bg-gray-900 py-20 px-5 sm:px-10 md:px-20">
         
+        
       {/* Heading */}
       <motion.h2
         className="text-4xl sm:text-5xl font-bold text-blue-900 dark:text-white text-center"
@@ -80,6 +81,7 @@ const About = () => {
           </motion.div>
         ))}
       </div> 
+     
     </div>
   );
 };
