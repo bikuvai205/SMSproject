@@ -7,12 +7,15 @@ import About from "../Components/About";
 const LandingPage = () => {
   return (
     <div>
-      <Navbar />
-      <Herosection/>
-      <Features/>
+      <Navbar/>
+      <Herosection />
+      <Features />
+      <About />
+      <Footersection />
       
       
-      <Footersection/>
+      
+    
       
     </div>
   );
