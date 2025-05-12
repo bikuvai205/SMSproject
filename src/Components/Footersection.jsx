@@ -14,9 +14,11 @@ const Footersection = () => {
 
         {/* Footer links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div>
+          <div className="border-r border-gray-600">
             <h4 className="font-semibold mb-4 text-center">
-              <b>Navigate to:</b>
+              <b>
+                <span className="text-blue-600">Navigate</span> To:
+              </b>
             </h4>
             <ul className="space-y-2 text-center text-gray-300">
               <li>
@@ -36,9 +38,11 @@ const Footersection = () => {
               </li>
             </ul>
           </div>
-          <div>
+          <div className="border-r border-gray-600">
             <h4 className="font-semibold text-center mb-4">
-              <b>Quick Links:</b>
+              <b>
+                <span className="text-blue-600">Quick</span> Links:
+              </b>
             </h4>
             <ul className="space-y-2 text-center text-gray-300">
               <li>
@@ -58,9 +62,11 @@ const Footersection = () => {
               </li>
             </ul>
           </div>
-          <div>
+          <div className="border-r border-gray-600">
             <h4 className="font-semibold mb-4 text-center">
-              <b>Follow Us:</b>
+              <b>
+                <span className="text-blue-600">Follow</span> Us:
+              </b>
             </h4>
             <div className="flex space-x-4 justify-center">
               <a
