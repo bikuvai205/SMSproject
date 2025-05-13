@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ToastNotification from "../Reusable/ToastNotification";
+import { notify } from "../../utils/toast";
 
 const GettingStartForm = () => {
   const [formData, setFormData] = useState({
@@ -18,8 +20,6 @@ const GettingStartForm = () => {
     additionalInfo: "",
   });
 
-  const [message, setMessage] = useState("");
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -30,32 +30,82 @@ const GettingStartForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+  // Check for empty fields
+  const requiredFields = [
+    "fullName",
+    "role",
+    "address",
+    "email",
+    "phone",
+    "citizenDoc",
+    "institutionName",
+    "panVat",
+    "institutionAddress",
+    "institutionEmail",
+    "headName",
+    "institutionContact",
+    "institutionType",
+  ];
+
+  // Find any empty required field
+  const emptyField = requiredFields.find((field) => !formData[field]);
+
+  if (emptyField) {
+    // Trigger error toast with the message for missing fields
+    notify("Please fill in all required fields.", "error");
+    return; // Prevent form submission
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      // Trigger success toast
+      notify(result.message, "success");
+
+      // Clear the form by resetting the formData state
+      setFormData({
+        fullName: "",
+        role: "",
+        address: "",
+        email: "",
+        phone: "",
+        citizenDoc: "",
+        institutionName: "",
+        panVat: "",
+        institutionAddress: "",
+        institutionEmail: "",
+        headName: "",
+        institutionContact: "",
+        institutionType: "",
+        additionalInfo: "",
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setMessage(data.message);
-      } else {
-        setMessage("Something went wrong.");
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage("Server error. Please try again.");
+    } else {
+      // Trigger error toast
+      notify("Something went wrong.", "error");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    // Trigger error toast for server issues
+    notify("Server error. Please try again.", "error");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-900 text-white px-4 py-10">
+      {/* Include ToastNotification Component */}
+      <ToastNotification />
+      
       <form
         onSubmit={handleSubmit}
         className="max-w-7xl mx-auto bg-gray-800 p-8 rounded-lg shadow-md"
@@ -129,7 +179,7 @@ const GettingStartForm = () => {
                 onChange={handleChange}
               />
               <Input
-                label="Address"
+                label="Institution Address"
                 name="institutionAddress"
                 value={formData.institutionAddress}
                 onChange={handleChange}
@@ -155,6 +205,7 @@ const GettingStartForm = () => {
                 onChange={handleChange}
               />
 
+              {/* Institution Type Radio Buttons */}
               <div className="mt-4">
                 <label className="block text-sm font-medium text-white mb-1">
                   Institution Type
@@ -191,6 +242,7 @@ const GettingStartForm = () => {
                 </div>
               </div>
 
+              {/* Additional Info */}
               <div className="mt-4">
                 <label className="block text-sm font-medium text-white mb-1">
                   Additional Information
@@ -199,7 +251,7 @@ const GettingStartForm = () => {
                   name="additionalInfo"
                   value={formData.additionalInfo}
                   onChange={handleChange}
-                  className="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
+                  className="w-full p-3 rounded-md bg-gray-700 border border-gray-600 text-white"
                   rows={4}
                   placeholder="Anything you'd like to share about the institution..."
                 ></textarea>
@@ -208,19 +260,16 @@ const GettingStartForm = () => {
           </div>
         </div>
 
-        {/* Submit */}
+        {/* Submit Button */}
         <div className="mt-10 text-center">
           <button
             type="submit"
-            className="px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-md transition focus:outline-none focus:ring-4 focus:ring-yellow-300"
+            className="px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-md"
           >
             Submit Registration
           </button>
-          {message && (
-            <p className="text-gray-300 text-sm mt-4">{message}</p>
-          )}
           <p className="text-gray-400 text-sm mt-2">
-            “Your data is securely stored and reviewed manually.”
+            "Your data is securely stored and reviewed manually."
           </p>
         </div>
       </form>
@@ -228,34 +277,19 @@ const GettingStartForm = () => {
   );
 };
 
-// 🔁 Reusable Input
+// 🔁 Reusable Input Component
 const Input = ({ label, type = "text", name, value, onChange }) => (
   <div>
     <label className="block text-sm font-medium text-white mb-1">{label}</label>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="w-full p-3 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white placeholder-gray-400"
-      placeholder={label}
-    />
-  </div>
-);
+<input type={type} name={name} value={value} onChange={onChange} className="w-full p-3 rounded-md bg-gray-700 border border-gray-600 text-white" required />
 
-// 🔁 Reusable Radio
+</div> );
+// 🔁 Reusable Radio Button Component
 const Radio = ({ label, name, value, checked, onChange }) => (
-  <label className="inline-flex items-center space-x-2 text-sm text-white">
-    <input
-      type="radio"
-      name={name}
-      value={value}
-      checked={checked}
-      onChange={onChange}
-      className="form-radio text-yellow-500 focus:ring-yellow-500"
-    />
-    <span>{label}</span>
-  </label>
+<label className="inline-flex items-center text-white">
+<input type="radio" name={name} value={value} checked={checked} onChange={onChange} className="form-radio h-4 w-4 text-yellow-500" />
+<span className="ml-2">{label}</span>
+</label>
 );
 
 export default GettingStartForm;
