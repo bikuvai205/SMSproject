@@ -7,7 +7,7 @@ const GettingStartPage = () => {
     <>
     <GetNav/>
     <div className="text-center pt-25 bg-gray-900">
-  <h1 className="text-3xl font-bold text-white">
+  <h1 className="text-3xl font-bold text-amber-300">
     REGISTER YOUR INSTITUTION
   </h1>
   <p className="text-gray-400 mt-2 text-sm">
@@ -22,7 +22,7 @@ const GettingStartPage = () => {
     </p>
 </div>
 <GetForm/>
-
+<Footer/>
   
     </>
     );
