@@ -67,7 +67,7 @@ const Herosection = () => {
             transition={{ duration: 1, delay: 1.6 }}
           >
            <Link to="/getting-started"
-              className="rounded-md bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+              className="rounded-md bg-blue-700 px-10 py-3.5 text-xl font-semibold text-white shadow-sm hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
             >
               Get Started →
            </Link>
