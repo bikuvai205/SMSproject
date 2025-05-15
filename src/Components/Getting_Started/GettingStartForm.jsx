@@ -171,7 +171,7 @@ const GettingStartForm = () => {
           </p>
           <p className="text-gray-400 text-sm mt-2">
             Already have an account?{" "}
-            <Link to="/login">
+            <Link to="/Login">
             <a  className="text-yellow-500 hover:underline hover:cursor-pointer" >
               Login here</a>.
             </Link>
