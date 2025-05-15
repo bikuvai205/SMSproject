@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ToastNotification from "../Reusable/ToastNotification";
 import { notify } from "../../utils/toast";
+import { Link } from "react-router-dom";
 
 const GettingStartForm = () => {
   const [formData, setFormData] = useState({
@@ -167,6 +168,13 @@ const GettingStartForm = () => {
           </button>
           <p className="text-gray-400 text-sm mt-2">
             "Your data is securely stored and reviewed manually."
+          </p>
+          <p className="text-gray-400 text-sm mt-2">
+            Already have an account?{" "}
+            <Link to="/login">
+            <a  className="text-yellow-500 hover:underline hover:cursor-pointer" >
+              Login here</a>.
+            </Link>
           </p>
         </div>
       </form>

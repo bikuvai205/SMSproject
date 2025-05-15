@@ -1,5 +1,6 @@
 import React from "react";
 import logo from "../../assets/image/logos.png";
+import { Link } from "react-router-dom";
 
 const GettingStartNav = () => {
   return (
@@ -14,12 +15,14 @@ const GettingStartNav = () => {
         </div>
 
         {/* Go Back to Home Link */}
+        <Link to="/">
         <a
-          href="/"
+        
           className="text-blue-600 hover:underline font-medium text-sm"
         >
           &lt;&lt; Go Back to Home
         </a>
+        </Link>
       </div>
     </nav>
   );

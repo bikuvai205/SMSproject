@@ -18,8 +18,11 @@ const GettingStartPage = () => {
  
 </div>
 <div>
-    <p className=" pt-15 bg-gray-900 text-l text-amber-200">
+    <p className=" pt-15 pl-5 bg-gray-900 text-l text-amber-200">
         *Please fill out this form to get started with Adhyanam. We will contact you shortly with your institution ID and further instructions.
+    </p>
+    <p className="pl-5  bg-gray-900 text-l text-amber-200">
+       Note : The fields marked with * are mandatory.
     </p>
 </div>
 <GetForm/>
