@@ -54,10 +54,9 @@ app.post('/api/register', (req, res) => {
 
   // Log full form data
   console.log('✅ Received form data:', req.body);
-
-  // Respond with success message
   res.status(200).json({ message: 'Form submitted successfully!' });
 });
+
 
 // Start server
 app.listen(PORT, () => {
