@@ -1,17 +1,16 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom"; // ✅ Import routing components
-
 import LandingPage from "./Webpages/LandingPage";
-import GettingStartedPage from "./Webpages/GettingStartPage"; // ✅ Import your second page
+import GettingStartedPage from "./Webpages/GettingStartPage"; // ✅ Import your  second page
 
 function App() {
   return (
     <Routes>
-      {/* Main landing page */}
+      {/* Landing page  home page*/}
       <Route path="/" element={<LandingPage />} />
-
-      {/* Getting started page */}
+      {/* Getting Started page */}
       <Route path="/getting-started" element={<GettingStartedPage />} />
+
     </Routes>
   );
 }

@@ -1,8 +1,8 @@
 import React from "react";
 import GetNav from "../Components/Getting_Started/GettingStartNav";
 import GetForm from "../Components/Getting_Started/GettingStartForm";
-import Footer from "../Components/Landing/Footersection";
-import Footersection from "../Components/Landing/Footersection";
+
+import GettingStartedFooter from "../Components/Getting_Started/GettingStartedFooter";
 const GettingStartPage = () => {
     return(
     <>
@@ -26,10 +26,8 @@ const GettingStartPage = () => {
     </p>
 </div>
 <GetForm/>
-<Footersection/>
-
-  
-    </>
+<GettingStartedFooter/>
+ </>
     );
 };
 export default GettingStartPage;

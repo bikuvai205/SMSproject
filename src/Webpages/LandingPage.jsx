@@ -4,8 +4,10 @@ import Herosection from "../Components/Landing/Herosection";
 import Features from "../Components/Landing/Features";
 import About from "../Components/Landing/About";
 import Footersection from "../Components/Landing/Footersection";
+import { useLocation } from "react-router-dom";
 
 const LandingPage = () => {
+  const location = useLocation(); // ⬅️ to read scrollTo state
   const [activeSection, setActiveSection] = useState("home");
 
   const sectionRefs = {
@@ -15,19 +17,27 @@ const LandingPage = () => {
     contact: useRef(null),
   };
 
-  // Scroll to section when clicked
+  // ✅ Scroll to section from external route using state
+  useEffect(() => {
+    const scrollTarget = location.state?.scrollTo;
+    if (scrollTarget && sectionRefs[scrollTarget]?.current) {
+      sectionRefs[scrollTarget].current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [location]);
+
+  // ✅ Scroll to section when clicked in Navbar
   const scrollToSection = (id) => {
     sectionRefs[id]?.current?.scrollIntoView({
       behavior: "smooth",
     });
   };
 
-  // Track visible section
+  // ✅ Track which section is active (used for highlighting)
   useEffect(() => {
     const observerOptions = {
       root: null,
       rootMargin: "0px",
-      threshold: 0.6, // 60% of section must be visible
+      threshold: 0.6,
     };
 
     const observerCallback = (entries) => {
@@ -53,6 +63,7 @@ const LandingPage = () => {
 
   return (
     <div>
+      {/* ✅ Pass activeSection and scroll function to navbar */}
       <Navbar activeSection={activeSection} scrollToSection={scrollToSection} />
 
       <div id="home" ref={sectionRefs.home} className="scroll-mt-20">
