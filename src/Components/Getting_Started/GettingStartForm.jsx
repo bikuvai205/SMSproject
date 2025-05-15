@@ -30,82 +30,82 @@ const GettingStartForm = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Check for empty fields
-  const requiredFields = [
-    "fullName",
-    "role",
-    "address",
-    "email",
-    "phone",
-    "citizenDoc",
-    "institutionName",
-    "panVat",
-    "institutionAddress",
-    "institutionEmail",
-    "headName",
-    "institutionContact",
-    "institutionType",
-  ];
+    // Check for empty fields
+    const requiredFields = [
+      "fullName",
+      "role",
+      "address",
+      "email",
+      "phone",
+      "citizenDoc",
+      "institutionName",
+      "panVat",
+      "institutionAddress",
+      "institutionEmail",
+      "headName",
+      "institutionContact",
+      "institutionType",
+    ];
 
-  // Find any empty required field
-  const emptyField = requiredFields.find((field) => !formData[field]);
+    // Find any empty required field
+    const emptyField = requiredFields.find((field) => !formData[field]);
 
-  if (emptyField) {
-    // Trigger error toast with the message for missing fields
-    notify("Please fill in all required fields.", "error");
-    return; // Prevent form submission
-  }
-
-  try {
-    const res = await fetch("http://localhost:5000/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const result = await res.json();
-
-    if (res.ok) {
-      // Trigger success toast
-      notify(result.message, "success");
-
-      // Clear the form by resetting the formData state
-      setFormData({
-        fullName: "",
-        role: "",
-        address: "",
-        email: "",
-        phone: "",
-        citizenDoc: "",
-        institutionName: "",
-        panVat: "",
-        institutionAddress: "",
-        institutionEmail: "",
-        headName: "",
-        institutionContact: "",
-        institutionType: "",
-        additionalInfo: "",
-      });
-    } else {
-      // Trigger error toast
-      notify("Something went wrong.", "error");
+    if (emptyField) {
+      // Trigger error toast with the message for missing fields
+      notify("Please fill in all required fields.", "error");
+      return; // Prevent form submission
     }
-  } catch (err) {
-    console.error(err);
-    // Trigger error toast for server issues
-    notify("Server error. Please try again.", "error");
-  }
-};
+
+    try {
+      const res = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        // Trigger success toast
+        notify(result.message, "success");
+
+        // Clear the form by resetting the formData state
+        setFormData({
+          fullName: "",
+          role: "",
+          address: "",
+          email: "",
+          phone: "",
+          citizenDoc: "",
+          institutionName: "",
+          panVat: "",
+          institutionAddress: "",
+          institutionEmail: "",
+          headName: "",
+          institutionContact: "",
+          institutionType: "",
+          additionalInfo: "",
+        });
+      } else {
+        // Trigger error toast
+        notify("Something went wrong.", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      // Trigger error toast for server issues
+      notify("Server error. Please try again.", "error");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white px-4 py-10">
       {/* Include ToastNotification Component */}
       <ToastNotification />
-      
+
       <form
         onSubmit={handleSubmit}
         className="max-w-7xl mx-auto bg-gray-800 p-8 rounded-lg shadow-md"
@@ -281,15 +281,29 @@ const GettingStartForm = () => {
 const Input = ({ label, type = "text", name, value, onChange }) => (
   <div>
     <label className="block text-sm font-medium text-white mb-1">{label}</label>
-<input type={type} name={name} value={value} onChange={onChange} className="w-full p-3 rounded-md bg-gray-700 border border-gray-600 text-white" required />
-
-</div> );
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full p-3 rounded-md bg-gray-700 border border-gray-600 text-white"
+      required
+    />
+  </div>
+);
 // 🔁 Reusable Radio Button Component
 const Radio = ({ label, name, value, checked, onChange }) => (
-<label className="inline-flex items-center text-white">
-<input type="radio" name={name} value={value} checked={checked} onChange={onChange} className="form-radio h-4 w-4 text-yellow-500" />
-<span className="ml-2">{label}</span>
-</label>
+  <label className="inline-flex items-center text-white">
+    <input
+      type="radio"
+      name={name}
+      value={value}
+      checked={checked}
+      onChange={onChange}
+      className="form-radio h-4 w-4 text-yellow-500"
+    />
+    <span className="ml-2">{label}</span>
+  </label>
 );
 
 export default GettingStartForm;

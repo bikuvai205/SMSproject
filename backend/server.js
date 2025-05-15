@@ -12,21 +12,21 @@ app.get('/', (req, res) => {
   res.send('Backend server is running!');
 });
 
-// API route to handle form submission
 app.post('/api/register', (req, res) => {
-  const { fullname, email, phone } = req.body;
+  const { fullName, email, phone } = req.body;
 
-  // Check if any field is empty
-  if (!fullname || !email || !phone) {
+  console.log("📦 Incoming data:", req.body);
+  console.log("💡 Extracted:", { fullName, email, phone });
+
+  if (!fullName || !email || !phone) {
+    console.log("❌ Missing field(s)");
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  // Log the form data received from the frontend
   console.log('✅ Received form data:', req.body);
-
-  // Respond with success message
   res.status(200).json({ message: 'Form submitted successfully!' });
 });
+
 
 // Start server
 app.listen(PORT, () => {
