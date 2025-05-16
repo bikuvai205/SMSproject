@@ -1,8 +1,8 @@
 import React from "react";
 import GetNav from "../Components/Getting_Started/GettingStartNav";
 import GetForm from "../Components/Getting_Started/GettingStartForm";
-import Footer from "../Components/Landing/Footersection";
-import Footersection from "../Components/Landing/Footersection";
+
+import GettingStartedFooter from "../Components/Getting_Started/GettingStartedFooter";
 const GettingStartPage = () => {
     return(
     <>
@@ -12,7 +12,7 @@ const GettingStartPage = () => {
     REGISTER YOUR INSTITUTION
   </h1>
   <p className="text-gray-400 mt-2 text-sm">
-    'Get your institute ID & start using Adhyanam to Manage students, track progress, and streamline education with ease..'
+    'Get your institute ID & start using Adhyanam to Manage students, track progress, and streamline management with ease..'
   </p>
 
  
@@ -26,10 +26,8 @@ const GettingStartPage = () => {
     </p>
 </div>
 <GetForm/>
-<Footersection/>
-
-  
-    </>
+<GettingStartedFooter/>
+ </>
     );
 };
 export default GettingStartPage;

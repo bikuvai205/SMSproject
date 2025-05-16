@@ -1,5 +1,6 @@
 import React from "react";
 import logo from "../../assets/image/logos.png";
+import { Link } from "react-router-dom";
 
 const Footersection = () => {
   return (
@@ -14,7 +15,7 @@ const Footersection = () => {
         </div>
 
         {/* Footer links */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+        <div className="flex justify-evenly  mb-12">
           {/* Column 1 */}
           <div className="md:border-r border-gray-600 px-4">
             <h4 className="font-semibold mb-4 text-center">
@@ -23,28 +24,23 @@ const Footersection = () => {
               </b>
             </h4>
             <ul className="space-y-2 text-center text-gray-300">
-              <li><a href="#home" className="hover:underline">Home</a></li>
-              <li><a href="#about" className="hover:underline">About</a></li>
-              <li><a href="#features" className="hover:underline">Features</a></li>
-            </ul>
+  <li>
+    <Link to="/" state={{ scrollTo: "home" }} className="hover:underline">Home</Link>
+  </li>
+  <li>
+    <Link to="/" state={{ scrollTo: "about" }} className="hover:underline">About</Link>
+  </li>
+  <li>
+    <Link to="/" state={{ scrollTo: "features" }} className="hover:underline">Features</Link>
+  </li>
+</ul>
+
           </div>
+
+         
 
           {/* Column 2 */}
-          <div className="md:border-r border-gray-600 px-4">
-            <h4 className="font-semibold text-center mb-4">
-              <b>
-                <span className="text-blue-600">Quick</span> Links:
-              </b>
-            </h4>
-            <ul className="space-y-2 text-center text-gray-300">
-              <li><a href="/calendar" className="hover:underline">Login</a></li>
-              <li><a href="/notices" className="hover:underline">Notices</a></li>
-              <li><a href="/contact" className="hover:underline">Contact Us</a></li>
-            </ul>
-          </div>
-
-          {/* Column 3 */}
-          <div className="px-4">
+          <div className="px-4 md:border-l border-gray-600">
             <h4 className="font-semibold mb-4 text-center">
               <b>
                 <span className="text-blue-600">Follow</span> Us:
