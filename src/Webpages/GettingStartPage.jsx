@@ -12,7 +12,7 @@ const GettingStartPage = () => {
     REGISTER YOUR INSTITUTION
   </h1>
   <p className="text-gray-400 mt-2 text-sm">
-    'Get your institute ID & start using Adhyanam to Manage students, track progress, and streamline education with ease..'
+    'Get your institute ID & start using Adhyanam to Manage students, track progress, and streamline management with ease..'
   </p>
 
  

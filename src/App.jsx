@@ -12,7 +12,7 @@ function App() {
       {/* Getting Started page */}
       <Route path="/getting-started" element={<GettingStartedPage />} />
       {/* Login page */}
-<Route path="/login" element={<LoginPage />} />
+     <Route path="/login" element={<LoginPage />} />
     </Routes>
   );
 }
