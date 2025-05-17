@@ -1,0 +1,44 @@
+<!-- backend/views/admin-login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login</title>
+  <style>
+    body{display:flex;align-items:center;justify-content:center;
+         height:100vh;background:#f4f6fa;font-family:sans-serif}
+    .box{background:#fff;padding:30px 40px;border-radius:8px;
+         width:320px;box-shadow:0 6px 16px rgba(0,0,0,.12);}
+    h2{text-align:center;margin-bottom:24px}
+    input{width:100%;padding:10px;margin:6px 0 18px;
+         border:1px solid #ccc;border-radius:4px}
+    button{width:100%;padding:10px;background:#0284c7;color:#fff;
+           border:none;border-radius:4px;font-weight:bold;cursor:pointer}
+    .error{color:#e11d48;text-align:center;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Admin Login</h2>
+    <input id="user" placeholder="Username" autocomplete="off" />
+    <input id="pass" type="password" placeholder="Password" />
+    <button onclick="login()">Sign in</button>
+    <div id="err" class="error"></div>
+  </div>
+
+<script>
+function login(){
+  const u=document.getElementById('user').value.trim();
+  const p=document.getElementById('pass').value.trim();
+  if(!u||!p){document.getElementById('err').textContent='Enter both fields';return;}
+
+  // try a lightweight auth call
+  fetch('/admin/data',{headers:{Authorization:'Basic '+btoa(u+':'+p)}})
+    .then(r=>{ if(!r.ok) throw new Error('Bad credentials'); return r.json(); })
+    .then(()=>{ localStorage.setItem('admAuth',btoa(u+':'+p));
+                window.location='/admin/registrations'; })
+    .catch(e=>{ document.getElementById('err').textContent='Invalid login'; });
+}
+</script>
+</body>
+</html>
