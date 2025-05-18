@@ -1,64 +1,50 @@
+// backend/server.js
+require('dotenv').config();              // 1️⃣  Load .env FIRST
+
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
+
+const Registration = require('./models/Registration'); // adjust path if models folder differs
+
 const app = express();
 const PORT = 5000;
 
-// Middleware
+// ──────────────────────────── MIDDLEWARE ────────────────────────────
 app.use(cors());
-app.use(express.json()); // To parse JSON bodies
+app.use(express.json());
 
-// Basic test route
-app.get('/', (req, res) => {
-  res.send('Backend server is running!');
-});
-
-app.post('/api/register', (req, res) => {
-  const {
-    fullName,
-    role,
-    address,
-    email,
-    phone,
-    citizenDoc,
-    institutionName,
-    panVat,
-    institutionAddress,
-    institutionEmail,
-    headName,
-    institutionContact,
-    institutionType,
-  } = req.body;
-
-  // Validate required fields
-  const requiredFields = {
-    fullName,
-    role,
-    address,
-    email,
-    phone,
-    citizenDoc,
-    institutionName,
-    panVat,
-    institutionAddress,
-    institutionEmail,
-    headName,
-    institutionContact,
-    institutionType,
-  };
-
-  const emptyField = Object.entries(requiredFields).find(([key, value]) => !value);
-
-  if (emptyField) {
-    return res.status(400).json({ message: `Missing required field: ${emptyField[0]}` });
+// ──────────────────────────── ROUTES ────────────────────────────────
+app.post('/api/register', async (req, res) => {
+  try {
+    const registration = new Registration(req.body);
+    await registration.save();
+    console.log('✅ Data saved:', registration.toJSON());
+    res.status(201).json({ message: 'Registration successful!' });
+  } catch (err) {
+    console.error('❌ Error saving to DB:', err);
+    res.status(500).json({ message: 'Server error while saving data' });
   }
-
-  // Log full form data
-  console.log('✅ Received form data:', req.body);
-  res.status(200).json({ message: 'Form submitted successfully!' });
 });
 
+// ──────────────────── MONGODB CONNECTION & SERVER START ─────────────
+const uri = process.env.MONGO_URI;       // 2️⃣  Uses your env variable
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+if (!uri) {
+  console.error('❌ MONGO_URI not found in .env');
+  process.exit(1);
+}
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('✅ Connected to MongoDB Atlas');
+  app.listen(PORT, () =>
+    console.log(`🚀 Server running at http://localhost:${PORT}`)
+  );
+})
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
 });
