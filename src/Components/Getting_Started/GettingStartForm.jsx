@@ -21,12 +21,12 @@ const GettingStartForm = () => {
     additionalInfo: "",
   });
 
- const handleChange = (e) => {
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value,
-  });
-};
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleRadioChange = (e) => {
     setFormData((prev) => ({ ...prev, institutionType: e.target.value }));
@@ -262,17 +262,11 @@ const GettingStartForm = () => {
           </p>
           <p className="text-gray-400 text-sm mt-2">
             Already have an account?{" "}
-<<<<<<< HEAD
-            <Link to="/Login">
-              <a className="text-yellow-500 hover:underline hover:cursor-pointer">
-                Login here
-              </a>
-              .
-=======
-            <Link to="/Login" className="text-yellow-500 hover:underline hover:cursor-pointer">
-            
+            <Link
+              to="/Login"
+              className="text-yellow-500 hover:underline hover:cursor-pointer"
+            >
               Login here
->>>>>>> 8f52fbc8a8ec89232ca9cd83e4c5c17341d4399f
             </Link>
           </p>
         </div>
