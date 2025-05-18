@@ -1,0 +1,36 @@
+<!-- backend/views/admin-dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Admin Dashboard</title>
+<style>
+  body{font-family:sans-serif;padding:20px}
+  table{border-collapse:collapse;width:100%;margin-top:20px}
+  th,td{border:1px solid #ccc;padding:8px} th{background:#f0f0f0}
+</style>
+</head>
+<body>
+<h1>Registered Institutions</h1>
+<table id="tbl"><thead><tr>
+  <th>Full Name</th><th>Email</th><th>Phone</th><th>Institution</th>
+</tr></thead><tbody></tbody></table>
+
+<script>
+const auth = localStorage.getItem('admAuth');
+if(!auth){ location='/admin/login'; }
+
+fetch('/admin/data',{headers:{Authorization:'Basic '+auth}})
+  .then(r=>{ if(!r.ok) throw new Error(); return r.json(); })
+  .then(data=>{
+    const tb=document.querySelector('#tbl tbody');
+    data.forEach(d=>{
+      tb.insertAdjacentHTML('beforeend',
+        `<tr><td>${d.fullName}</td><td>${d.email}</td>
+             <td>${d.phone}</td><td>${d.institutionName}</td></tr>`);
+    });
+  })
+  .catch(()=>{ alert('Session expired'); localStorage.removeItem('admAuth'); location='/admin/login';});
+</script>
+</body>
+</html>
