@@ -1,36 +1,136 @@
-<!-- backend/views/admin-dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<title>Admin Dashboard</title>
-<style>
-  body{font-family:sans-serif;padding:20px}
-  table{border-collapse:collapse;width:100%;margin-top:20px}
-  th,td{border:1px solid #ccc;padding:8px} th{background:#f0f0f0}
-</style>
+  <meta charset="UTF-8" />
+  <title>Admin – Registrations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* premium shadow + backdrop for light & dark */
+    .card {
+      @apply border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 backdrop-blur-sm shadow-lg rounded-2xl;
+    }
+
+    .accent-bar {
+      @apply absolute left-0 top-0 h-full w-1 rounded-l-2xl bg-amber-500;
+    }
+
+    .zebra tbody tr:nth-child(odd) {
+      @apply bg-gray-50 dark:bg-gray-700/40;
+    }
+
+    .zebra tbody tr:hover {
+      @apply bg-amber-50 dark:bg-gray-700;
+    }
+  </style>
 </head>
-<body>
-<h1>Registered Institutions</h1>
-<table id="tbl"><thead><tr>
-  <th>Full Name</th><th>Email</th><th>Phone</th><th>Institution</th>
-</tr></thead><tbody></tbody></table>
 
-<script>
-const auth = localStorage.getItem('admAuth');
-if(!auth){ location='/admin/login'; }
+<body class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 p-8">
+  <div class="max-w-6xl mx-auto space-y-4">
+    <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-gray-100 
+             bg-gradient-to-r from-amber-400/20 via-transparent to-amber-400/20 
+             rounded-lg py-3 px-6">
+      Registrations Dashboard
+    </h1>
+    <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+      This panel shows the total number of people that have registered.
+    </p>
+    <div id="totalCount" class="text-center font-semibold text-amber-700 dark:text-amber-400 text-lg mb-4"></div>
+    <div id="tableWrapper" class="space-y-10"></div>
+  </div>
 
-fetch('/admin/data',{headers:{Authorization:'Basic '+auth}})
-  .then(r=>{ if(!r.ok) throw new Error(); return r.json(); })
-  .then(data=>{
-    const tb=document.querySelector('#tbl tbody');
-    data.forEach(d=>{
-      tb.insertAdjacentHTML('beforeend',
-        `<tr><td>${d.fullName}</td><td>${d.email}</td>
-             <td>${d.phone}</td><td>${d.institutionName}</td></tr>`);
-    });
-  })
-  .catch(()=>{ alert('Session expired'); localStorage.removeItem('admAuth'); location='/admin/login';});
-</script>
+  <script>
+    /* helpers ------------------------------------------------------------ */
+    const hdr = () => {
+      const tok = localStorage.getItem('sms_admin_creds');
+      return tok ? { Authorization: `Basic ${tok}` } : {};
+    };
+    const field = (k, v) => `
+      <tr class="divide-x divide-gray-200 dark:divide-gray-600">
+        <td class="py-2 px-4 font-medium text-gray-700 dark:text-gray-300">${k}</td>
+        <td class="py-2 px-4 text-gray-900 dark:text-gray-100 break-words">${v ?? '-'}</td>
+      </tr>`;
+
+    /* renderer ----------------------------------------------------------- */
+    async function load() {
+      const r = await fetch('/admin/data', { headers: hdr() });
+      if (r.status === 401) { location.href = '/admin/login'; return; }
+      const regs = await r.json();
+
+      const wrap = document.getElementById('tableWrapper');
+      const totalCount = document.getElementById('totalCount');
+
+      // Show total registrations count
+      totalCount.textContent = `Total Registrations: ${regs.length}`;
+
+      if (!regs.length) {
+        wrap.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No registrations yet.</p>';
+        return;
+      }
+
+      wrap.innerHTML = regs.map(rec => {
+        const P = {
+          'Full Name': rec.fullName, 'Role': rec.role, 'Address': rec.address,
+          'Email': rec.email, 'Phone': rec.phone, 'Citizen Doc': rec.citizenDoc
+        };
+        const I = {
+          'Institute': rec.institutionName, 'Type': rec.institutionType, 'PAN / VAT': rec.panVat,
+          'Address': rec.institutionAddress, 'Email': rec.institutionEmail,
+          'Contact': rec.institutionContact, 'Additional': rec.additionalInfo
+        };
+        const date = new Date(rec.createdAt || parseInt(rec._id.slice(0, 8), 16) * 1000)
+          .toLocaleString();
+
+        return `
+<article class="relative card overflow-hidden">
+  <span class="accent-bar"></span>
+
+  <!-- header -->
+  <header class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 rounded-t-2xl">
+    <h2 class="text-lg font-semibold text-amber-600">Registration — ${date}</h2>
+    <div class="flex gap-4">
+      <button class="px-3 py-1 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm"
+              onclick="verifyReg('${rec._id}')">Verify</button>
+      <button class="px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white text-sm"
+              onclick="removeReg('${rec._id}')">Remove</button>
+    </div>
+  </header>
+
+  <!-- content -->
+  <div class="grid md:grid-cols-2">
+    <!-- personal -->
+    <section class="p-6 bg-[#1C2533] border-r border-gray-200 dark:border-gray-700">
+     <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100
++            pb-1 border-b-2 border-amber-500 w-max">Personal Info</h3>
+      <table class="w-full text-sm zebra divide-y divide-gray-200 dark:divide-gray-600 rounded-lg overflow-hidden">
+        <tbody>${Object.entries(P).map(([k, v]) => field(k, v)).join('')}</tbody>
+      </table>
+    </section>
+
+    <!-- institute -->
+    <section class="p-6 bg-[#1C2533]">
+    <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100
++            pb-1 border-b-2 border-amber-500 w-max">Institute Info</h3>
+      <table class="w-full text-sm zebra divide-y divide-gray-200 dark:divide-gray-600 rounded-lg overflow-hidden">
+        <tbody>${Object.entries(I).map(([k, v]) => field(k, v)).join('')}</tbody>
+      </table>
+    </section>
+  </div>
+</article>`;
+      }).join('');
+    }
+
+    /* actions ------------------------------------------------------------ */
+    const verifyReg = id => alert('Verify ' + id); // TODO
+    async function removeReg(id) {
+      if (!confirm('Delete this registration?')) return;
+      const r = await fetch('/admin/registration/' + id, { method: 'DELETE', headers: { ...hdr(), 'Content-Type': 'application/json' } });
+      if (r.ok) load();
+    }
+
+    window.addEventListener('DOMContentLoaded', load);
+  </script>
 </body>
+
 </html>
