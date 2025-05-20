@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Admin – Registrations</title>
+  <title>Admin-Registrations</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -36,7 +36,20 @@
     <p class="text-center text-sm text-gray-600 dark:text-gray-400">
       This panel shows the total number of people that have registered.
     </p>
-    <div id="totalCount" class="text-center font-semibold text-amber-700 dark:text-amber-400 text-lg mb-4"></div>
+   <div class="flex justify-between items-center mb-4 px-2">
+  <div id="totalCount" class="font-semibold text-amber-700 dark:text-amber-400 text-lg">
+    <!-- Total will be set via JS -->
+  </div>
+ <button onclick="logout()"
+        class="flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-lg 
+               bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 
+               dark:bg-amber-400 dark:text-gray-900 dark:hover:bg-amber-300 
+               shadow transition-all duration-200">
+ 
+  
+  Logout
+</button>
+</div>
     <div id="tableWrapper" class="space-y-10"></div>
   </div>
 
@@ -130,6 +143,15 @@
     }
 
     window.addEventListener('DOMContentLoaded', load);
+    function logout() {
+  localStorage.removeItem('sms_admin_creds'); // Remove auth token
+  location.href = '/admin/login'; // Redirect to login page
+}
+    // Check if user is logged in
+    const token = localStorage.getItem('sms_admin_creds');
+    if (!token) {
+      location.href = '/admin/login'; // Redirect to login page if not logged in
+    }
   </script>
 </body>
 

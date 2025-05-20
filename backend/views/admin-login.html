@@ -3,33 +3,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Login</title>
+  <title>Admin Login</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- tiny bit of custom CSS only for the glass‑blur -->
-  <style>
-    .glass {
-      backdrop-filter: blur(16px) saturate(150%);
-      -webkit-backdrop-filter: blur(16px) saturate(150%);
-      background: rgba(255,255,255,0.7);
-    }
-    @media (prefers-color-scheme: dark) {
-      .glass{background:rgba(30,41,59,0.65)}
-    }
-  </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center
-             bg-gradient-to-br from-sky-100 via-amber-100 to-rose-100
-             dark:from-slate-900 dark:via-slate-800 dark:to-slate-900
-             px-4">
-
-  <div class="glass shadow-xl rounded-2xl p-10 w-full max-w-sm
-              animate-[fadeIn_.6s_ease-out]">
-    <h1 class="text-2xl font-semibold text-center text-slate-800 dark:text-slate-200 mb-8">
-      Admin Login
-    </h1>
+<body class="min-h-screen flex items-center justify-center bg-slate-100 p-4
+             dark:bg-slate-900">
+  <div class="w-full max-w-sm bg-white/80 dark:bg-slate-800/70 backdrop-blur
+              rounded-2xl shadow-xl p-10">
+    <h1 class="text-2xl font-semibold text-center text-slate-800
+               dark:text-slate-200 mb-8">Admin Login</h1>
 
     <label class="block mb-4">
       <span class="sr-only">Username</span>
@@ -37,7 +21,7 @@
              class="w-full px-4 py-2 rounded-lg border border-slate-300
                     focus:outline-none focus:ring-2 focus:ring-amber-500
                     dark:bg-slate-700 dark:border-slate-600
-                    dark:text-slate-100 dark:placeholder-slate-400">
+                    dark:text-slate-100" />
     </label>
 
     <label class="block mb-6">
@@ -46,41 +30,46 @@
              class="w-full px-4 py-2 rounded-lg border border-slate-300
                     focus:outline-none focus:ring-2 focus:ring-amber-500
                     dark:bg-slate-700 dark:border-slate-600
-                    dark:text-slate-100 dark:placeholder-slate-400">
+                    dark:text-slate-100" />
     </label>
 
-    <button onclick="login()"
+    <button id="loginBtn"
             class="w-full py-2 rounded-lg bg-amber-500 hover:bg-amber-600
                    text-white font-semibold tracking-wide transition">
-      Sign in
+      Sign in
     </button>
 
     <div id="err" class="text-rose-600 dark:text-rose-400 text-center mt-4 text-sm"></div>
   </div>
 
-  <script>
-    function login() {
-      const u = document.getElementById('user').value.trim();
-      const p = document.getElementById('pass').value.trim();
-      if (!u || !p) {
-        document.getElementById('err').textContent = 'Enter both fields';
-        return;
-      }
-      fetch('/admin/data', {
-        headers: { Authorization: 'Basic ' + btoa(u + ':' + p) }
-      })
-        .then(r => {
-          if (!r.ok) throw new Error('Bad credentials');
-          return r.json();
-        })
-        .then(() => {
-          localStorage.setItem('admAuth', btoa(u + ':' + p));
-          window.location = '/admin/registrations';
-        })
-        .catch(() => {
-          document.getElementById('err').textContent = 'Invalid login';
-        });
-    }
-  </script>
+<script>
+const userEl = document.getElementById('user');
+const passEl = document.getElementById('pass');
+const errEl  = document.getElementById('err');
+
+function tryLogin() {
+  const u = userEl.value.trim();
+  const p = passEl.value.trim();
+  if (!u || !p) { errEl.textContent = 'Enter both fields'; return; }
+
+  const token = btoa(u + ':' + p);
+
+  fetch('/admin/data', { headers: { Authorization: 'Basic ' + token } })
+    .then(r => {
+      if (!r.ok) throw new Error('bad creds');
+      // success: remember the header & go to dashboard
+      localStorage.setItem('sms_admin_creds', token);
+      location.href = '/admin/registrations';
+    })
+    .catch(() => { errEl.textContent = 'Invalid login'; });
+}
+
+// click
+document.getElementById('loginBtn').addEventListener('click', tryLogin);
+// press Enter
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryLogin();
+});
+</script>
 </body>
 </html>
