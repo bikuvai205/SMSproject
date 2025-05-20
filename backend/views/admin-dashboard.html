@@ -33,19 +33,28 @@
              rounded-lg py-3 px-6">
       Registrations Dashboard
     </h1>
-    <p class="text-center text-sm text-gray-600 dark:text-gray-400">
-      This panel shows the total number of people that have registered.
-    </p>
+
+    <div class="flex justify-between items-center flex-wrap md:flex-nowrap px-2">
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        This panel shows the total number of people that have registered.
+      </p>
+      <button onclick="logout()"
+        class="mt-2 md:mt-0 text-sm font-medium border border-amber-700 dark:border-amber-400 text-amber-700 dark:text-amber-400 px-4 py-1 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900 transition">
+        Logout
+      </button>
+    </div>
+
     <div id="totalCount" class="text-center font-semibold text-amber-700 dark:text-amber-400 text-lg mb-4"></div>
     <div id="tableWrapper" class="space-y-10"></div>
   </div>
 
   <script>
-    /* helpers ------------------------------------------------------------ */
-    const hdr = () => {
-      const tok = localStorage.getItem('sms_admin_creds');
-      return tok ? { Authorization: `Basic ${tok}` } : {};
-    };
+    // /* helpers ------------------------------------------------------------ */
+    // const hdr = () => {
+    //   const tok = localStorage.getItem('sms_admin_creds');
+    //   return tok ? { Authorization: `Basic ${tok}` } : {};
+    // };
+
     const field = (k, v) => `
       <tr class="divide-x divide-gray-200 dark:divide-gray-600">
         <td class="py-2 px-4 font-medium text-gray-700 dark:text-gray-300">${k}</td>
@@ -54,7 +63,7 @@
 
     /* renderer ----------------------------------------------------------- */
     async function load() {
-      const r = await fetch('/admin/data', { headers: hdr() });
+      const r = await fetch('/admin/data');
       if (r.status === 401) { location.href = '/admin/login'; return; }
       const regs = await r.json();
 
@@ -101,8 +110,8 @@
   <div class="grid md:grid-cols-2">
     <!-- personal -->
     <section class="p-6 bg-[#1C2533] border-r border-gray-200 dark:border-gray-700">
-     <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100
-+            pb-1 border-b-2 border-amber-500 w-max">Personal Info</h3>
+      <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100 pb-1 border-b-2 border-amber-500 w-max">
+        Personal Info</h3>
       <table class="w-full text-sm zebra divide-y divide-gray-200 dark:divide-gray-600 rounded-lg overflow-hidden">
         <tbody>${Object.entries(P).map(([k, v]) => field(k, v)).join('')}</tbody>
       </table>
@@ -110,8 +119,8 @@
 
     <!-- institute -->
     <section class="p-6 bg-[#1C2533]">
-    <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100
-+            pb-1 border-b-2 border-amber-500 w-max">Institute Info</h3>
+      <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100 pb-1 border-b-2 border-amber-500 w-max">
+        Institute Info</h3>
       <table class="w-full text-sm zebra divide-y divide-gray-200 dark:divide-gray-600 rounded-lg overflow-hidden">
         <tbody>${Object.entries(I).map(([k, v]) => field(k, v)).join('')}</tbody>
       </table>
@@ -123,13 +132,45 @@
 
     /* actions ------------------------------------------------------------ */
     const verifyReg = id => alert('Verify ' + id); // TODO
+
     async function removeReg(id) {
       if (!confirm('Delete this registration?')) return;
-      const r = await fetch('/admin/registration/' + id, { method: 'DELETE', headers: { ...hdr(), 'Content-Type': 'application/json' } });
+      const r = await fetch('/admin/registration/' + id, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json' }
+      });
       if (r.ok) load();
     }
 
+    // function logout() {
+    //   // localStorage.removeItem('sms_admin_creds');
+    //   window.location.href = '/admin/login';
+    // }
+
+function logout() {
+  fetch('http://localhost:5000/admin/logout', {
+    method: 'POST',
+    credentials: 'include'
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      // alert('You have been logged out.');
+      window.location.href = '/admin/login';
+    } else {
+      alert('Logout failed.');
+    }
+  })
+  .catch(err => {
+    console.error('Logout error:', err);
+    alert('Error logging out.');
+  });
+}
+
+
     window.addEventListener('DOMContentLoaded', load);
+
+    
   </script>
 </body>
 
