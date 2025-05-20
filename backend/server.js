@@ -69,6 +69,18 @@ app.delete('/admin/delete/:id', adminAuth, async (req, res) => {
     res.status(500).json({ message: 'Server error during deletion' });
   }
 });
+// backend route
+app.post('/admin/verify-password', (req, res) => {
+  const input = req.body.password;
+  const adminPass = process.env.ADMIN_PASSWORD;
+
+  if (input === adminPass) {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false });
+  }
+});
+/* ──────────────────────── ADMIN AUTHENTICATION ───────────────────── */
 
 
 /* ───────────────────── PROTECTED DATA ENDPOINT ───────────────────── */

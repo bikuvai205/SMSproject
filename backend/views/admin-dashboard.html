@@ -90,7 +90,7 @@
       <button class="px-3 py-1 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm"
               onclick="verifyReg('${rec._id}')">Verify</button>
       <button class="px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white text-sm"
-              onclick="removeReg('${rec._id}')">Remove</button>
+              onclick="openDeleteModal('${rec._id}')">Remove</button>
     </div>
   </header>
 
@@ -142,7 +142,74 @@
     } else {
       window.addEventListener('DOMContentLoaded', load);
     }
+    let selectedIdForDelete = null;
+
+function openDeleteModal(id) {
+  selectedIdForDelete = id;
+  document.getElementById('adminPassInput').value = '';
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeModal() {
+  selectedIdForDelete = null;
+  document.getElementById('deleteModal').classList.add('hidden');
+}
+
+async function confirmDelete() {
+  const password = document.getElementById('adminPassInput').value.trim();
+  if (!password) return alert('Please enter password.');
+
+  const res = await fetch('/admin/verify-password', {
+    method: 'POST',
+    headers: { ...hdr(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    alert('Incorrect password.');
+    return;
+  }
+
+  // If verified, proceed with deletion
+  const r = await fetch('/admin/delete/' + selectedIdForDelete, {
+    method: 'DELETE',
+    headers: { ...hdr(), 'Content-Type': 'application/json' }
+  });
+
+  if (r.ok) {
+    closeModal();
+    load();
+  } else {
+    alert('Deletion failed.');
+  }
+}
+
   </script>
+  <!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 hidden bg-black/60 flex items-center justify-center">
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg relative space-y-4">
+    <h2 class="text-xl font-semibold text-red-600">Delete Registration</h2>
+    <p class="text-sm text-gray-700 dark:text-gray-300">This action cannot be undone. Please enter the admin password to continue.</p>
+
+    <input id="adminPassInput" type="password"
+           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 dark:text-white"
+           placeholder="Enter admin password" />
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="closeModal()"
+              class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded hover:bg-gray-400">
+        Cancel
+      </button>
+      <button onclick="confirmDelete()"
+              class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Confirm Delete
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 
 </html>
