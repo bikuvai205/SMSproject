@@ -7,12 +7,6 @@ const cors      = require('cors');
 const basicAuth = require('express-basic-auth');
 const path      = require('path');
 
-const express = require('express');
-const app = express();
-const session = require('express-session');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require('path');
 const Registration = require('./models/Registration');
 
 const app  = express();
