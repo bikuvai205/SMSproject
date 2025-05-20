@@ -54,6 +54,22 @@ app.get('/admin/login', (_req, res) =>
 app.get('/admin/registrations', (_req, res) =>
   res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'))
 );
+/* ───────────────────── DELETE REGISTRATION ───────────────────── */
+app.delete('/admin/delete/:id', adminAuth, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await Registration.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Record not found' });
+    }
+    console.log(`🗑️ Deleted registration with ID: ${id}`);
+    res.json({ message: 'Registration deleted successfully' });
+  } catch (err) {
+    console.error('❌ Error deleting registration:', err);
+    res.status(500).json({ message: 'Server error during deletion' });
+  }
+});
+
 
 /* ───────────────────── PROTECTED DATA ENDPOINT ───────────────────── */
 app.get('/admin/data', adminAuth, async (_req, res) => {
