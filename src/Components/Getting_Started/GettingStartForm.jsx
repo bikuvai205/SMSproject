@@ -21,12 +21,12 @@ const GettingStartForm = () => {
     additionalInfo: "",
   });
 
- const handleChange = (e) => {
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value,
-  });
-};
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleRadioChange = (e) => {
     setFormData((prev) => ({ ...prev, institutionType: e.target.value }));
@@ -109,12 +109,44 @@ const GettingStartForm = () => {
               Personal Information
             </h2>
             <div className="space-y-4">
-              <Input label="Full Name*" name="fullName" value={formData.fullName} onChange={handleChange} />
-              <Input label="Role on Institution*" name="role" value={formData.role} onChange={handleChange} />
-              <Input label="Address*" name="address" value={formData.address} onChange={handleChange} />
-              <Input label="Email*" name="email" type="email" value={formData.email} onChange={handleChange} />
-              <Input label="Phone Number*" name="phone" type="tel" value={formData.phone} onChange={handleChange} />
-              <Input label="Citizenship/Official Document Number*" name="citizenDoc" value={formData.citizenDoc} onChange={handleChange} />
+              <Input
+                label="Full Name*"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+              />
+              <Input
+                label="Role on Institution*"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+              />
+              <Input
+                label="Address*"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+              />
+              <Input
+                label="Email*"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              <Input
+                label="Phone Number*"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+              <Input
+                label="Citizenship/Official Document Number*"
+                name="citizenDoc"
+                value={formData.citizenDoc}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
@@ -124,12 +156,45 @@ const GettingStartForm = () => {
               Institution Information
             </h2>
             <div className="space-y-4">
-              <Input label="Institution Name*" name="institutionName" value={formData.institutionName} onChange={handleChange} />
-              <Input label="PAN/VAT Number*" name="panVat" value={formData.panVat} onChange={handleChange} />
-              <Input label="Institution Address*" name="institutionAddress" value={formData.institutionAddress} onChange={handleChange} />
-              <Input label="Institution Email*" name="institutionEmail" type="email" value={formData.institutionEmail} onChange={handleChange} />
-              <Input label="Head of Institution*" name="headName" value={formData.headName} onChange={handleChange} />
-              <Input label="Institution Contact Number*" name="institutionContact" type="tel" value={formData.institutionContact} onChange={handleChange} maxLength={10}/>
+              <Input
+                label="Institution Name*"
+                name="institutionName"
+                value={formData.institutionName}
+                onChange={handleChange}
+              />
+              <Input
+                label="PAN/VAT Number*"
+                name="panVat"
+                value={formData.panVat}
+                onChange={handleChange}
+              />
+              <Input
+                label="Institution Address*"
+                name="institutionAddress"
+                value={formData.institutionAddress}
+                onChange={handleChange}
+              />
+              <Input
+                label="Institution Email*"
+                name="institutionEmail"
+                type="email"
+                value={formData.institutionEmail}
+                onChange={handleChange}
+              />
+              <Input
+                label="Head of Institution*"
+                name="headName"
+                value={formData.headName}
+                onChange={handleChange}
+              />
+              <Input
+                label="Institution Contact Number*"
+                name="institutionContact"
+                type="tel"
+                value={formData.institutionContact}
+                onChange={handleChange}
+                maxLength={10}
+              />
 
               {/* Radio Buttons */}
               <div className="mt-4">
@@ -137,10 +202,34 @@ const GettingStartForm = () => {
                   Institution Type*
                 </label>
                 <div className="flex flex-wrap gap-4">
-                  <Radio label="Community" name="institutionType" value="Community" checked={formData.institutionType === "Community"} onChange={handleRadioChange} />
-                  <Radio label="Organizational" name="institutionType" value="Organizational" checked={formData.institutionType === "Organizational"} onChange={handleRadioChange} />
-                  <Radio label="Non-Profit" name="institutionType" value="Non-Profit" checked={formData.institutionType === "Non-Profit"} onChange={handleRadioChange} />
-                  <Radio label="Private" name="institutionType" value="Private" checked={formData.institutionType === "Private"} onChange={handleRadioChange} />
+                  <Radio
+                    label="Community"
+                    name="institutionType"
+                    value="Community"
+                    checked={formData.institutionType === "Community"}
+                    onChange={handleRadioChange}
+                  />
+                  <Radio
+                    label="Organizational"
+                    name="institutionType"
+                    value="Organizational"
+                    checked={formData.institutionType === "Organizational"}
+                    onChange={handleRadioChange}
+                  />
+                  <Radio
+                    label="Non-Profit"
+                    name="institutionType"
+                    value="Non-Profit"
+                    checked={formData.institutionType === "Non-Profit"}
+                    onChange={handleRadioChange}
+                  />
+                  <Radio
+                    label="Private"
+                    name="institutionType"
+                    value="Private"
+                    checked={formData.institutionType === "Private"}
+                    onChange={handleRadioChange}
+                  />
                 </div>
               </div>
 
@@ -173,8 +262,10 @@ const GettingStartForm = () => {
           </p>
           <p className="text-gray-400 text-sm mt-2">
             Already have an account?{" "}
-            <Link to="/Login" className="text-yellow-500 hover:underline hover:cursor-pointer">
-            
+            <Link
+              to="/Login"
+              className="text-yellow-500 hover:underline hover:cursor-pointer"
+            >
               Login here
             </Link>
           </p>
@@ -200,7 +291,9 @@ const Input = ({ label, type = "text", name, value, onChange }) => {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-white mb-1">{label}</label>
+      <label className="block text-sm font-medium text-white mb-1">
+        {label}
+      </label>
       <input
         type={type}
         name={name}
