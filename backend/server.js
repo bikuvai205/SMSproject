@@ -6,6 +6,7 @@ const mongoose  = require('mongoose');
 const cors      = require('cors');
 const basicAuth = require('express-basic-auth');
 const path      = require('path');
+const verifyRoute = require('./routes/verifyRoute');
 
 const Registration = require('./models/Registration');
 
@@ -19,6 +20,7 @@ app.use(express.json());
 /* (optional) serve static assets (css / js / images) */
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/admin', verifyRoute);
 const adminAuth = basicAuth({
   users : {
     [process.env.ADMIN_USERNAME || 'admin']:

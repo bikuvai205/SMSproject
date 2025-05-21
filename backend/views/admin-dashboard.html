@@ -96,7 +96,29 @@
     }).join('');
   }
 
-  const verifyReg = id => alert('Verify clicked for: ' + id);
+ // ─── VERIFY ────────────────────────────────────────────────────────────────
+async function verifyReg(id) {
+  try {
+    const res = await fetch(`/admin/verify/${id}`, {
+      method: 'GET',
+      headers: { ...hdr(), 'Content-Type': 'application/json' }
+    });
+
+    if (!res.ok) {
+      alert('Verification failed. Please try again.');
+      return;
+    }
+
+    const data = await res.json();
+    const { instituteId, superAdminId, password } = data;
+
+    alert(`✅ Verification Successful!\n\nInstitute ID: ${instituteId}\nSuper Admin ID: ${superAdminId}\nPassword: ${password}`);
+  } catch (err) {
+    console.error('Verification Error:', err);
+    alert('An error occurred during verification.');
+  }
+}
+
 
   function logout() {
     localStorage.removeItem('sms_admin_creds');
