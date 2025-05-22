@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const ActiveUser = require('../models/ActiveUser');
+const { generateId } = require('../controller/UserController');
+
 
 const usedInstituteIds = new Set(); // Store generated IDs temporarily
 
@@ -12,13 +15,7 @@ function generateUnique6DigitNumber(existingSet) {
   return num;
 }
 
-router.get('/verify/:id', (req, res) => {
-  const instituteId = generateUnique6DigitNumber(usedInstituteIds);
-  const superAdminId = Math.floor(100000 + Math.random() * 900000).toString();
-  const defaultPassword = 'superadmin123';
 
-  // Change the key here to 'password' instead of 'defaultPassword'
-  res.json({ instituteId, superAdminId, password: defaultPassword });
-});
+router.get('/verify/:id', generateId )
 
 module.exports = router;
