@@ -1,4 +1,4 @@
-// backend/server.js
+
 require('dotenv').config();              // Load .env FIRST
 
 const express   = require('express');
@@ -7,8 +7,9 @@ const cors      = require('cors');
 const basicAuth = require('express-basic-auth');
 const path      = require('path');
 const verifyRoute = require('./routes/verifyRoute');
-
 const Registration = require('./models/Registration');
+
+
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -32,7 +33,7 @@ const adminAuth = basicAuth({
 
 /* ─────────────────────────── ROOT ROUTE ──────────────────────────── */
 app.get('/', (_req, res) =>
-  res.send('💡 SMS backend running. Try POST /api/register or visit /admin/login')
+  res.send(' SMS backend running. Try POST /api/register or visit /admin/login')
 );
 
 /* ───────────────── PUBLIC REGISTRATION ROUTE ─────────────────────── */
@@ -71,7 +72,7 @@ app.delete('/admin/delete/:id', adminAuth, async (req, res) => {
     res.status(500).json({ message: 'Server error during deletion' });
   }
 });
-// backend route
+/* ──────────────────────── ADMIN AUTHENTICATION ───────────────────── */
 app.post('/admin/verify-password', (req, res) => {
   const input = req.body.password;
   const adminPass = process.env.ADMIN_PASSWORD;
@@ -82,7 +83,7 @@ app.post('/admin/verify-password', (req, res) => {
     res.status(401).json({ success: false });
   }
 });
-/* ──────────────────────── ADMIN AUTHENTICATION ───────────────────── */
+
 
 
 /* ───────────────────── PROTECTED DATA ENDPOINT ───────────────────── */
@@ -95,6 +96,20 @@ app.get('/admin/data', adminAuth, async (_req, res) => {
     res.status(500).json({ message: 'Error fetching registrations' });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ───────────── MONGODB CONNECTION & SERVER STARTUP ───────────────── */
 const uri = process.env.MONGO_URI;
