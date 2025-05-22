@@ -8,6 +8,7 @@ const basicAuth = require('express-basic-auth');
 const path      = require('path');
 const verifyRoute = require('./routes/verifyRoute');
 const Registration = require('./models/Registration');
+const ActiveUser = require('./models/ActiveUser');
 
 
 
@@ -87,15 +88,49 @@ app.post('/admin/verify-password', (req, res) => {
 
 
 /* ───────────────────── PROTECTED DATA ENDPOINT ───────────────────── */
-app.get('/admin/data', adminAuth, async (_req, res) => {
+app.get('/admin/data', async (req, res) => {
   try {
-    const regs = await Registration.find();
-    res.json(regs);
+    // Step 1: Get all registrations
+    const allRegistrations = await Registration.find().lean();
+
+    // Step 2: Get list of all verified registration IDs
+    const activeUsers = await ActiveUser.find({}, 'linkedRegistrationId'); // only fetch IDs
+    const verifiedIds = new Set(activeUsers.map(user => user.linkedRegistrationId.toString()));
+
+    // Step 3: Filter out registrations that are already verified
+    const unverified = allRegistrations.filter(reg => !verifiedIds.has(reg._id.toString()));
+
+    res.json(unverified); // return only unverified registrations
   } catch (err) {
-    console.error('❌ Error fetching registrations:', err);
-    res.status(500).json({ message: 'Error fetching registrations' });
+    console.error('Error fetching admin data:', err);
+    res.status(500).json({ error: 'Error fetching registrations' });
   }
 });
+
+/* ──────────────────────── VERIFIED USERS LIST ───────────────────── */
+
+app.get('/admin/verified-users', async (req, res) => {
+  try {
+    const activeUsers = await ActiveUser.find().lean();
+    const ids = activeUsers.map(user => user.linkedRegistrationId);
+    const registrations = await Registration.find({ _id: { $in: ids } }).lean();
+
+    const combined = activeUsers.map(user => {
+      const reg = registrations.find(r => r._id.toString() === user.linkedRegistrationId.toString());
+      if (!reg) {
+        return { ...user, missing: true, message: 'Original registration not found' };
+      }
+      return { ...reg, credentials: { instituteId: user.instituteId, superAdminId: user.superAdminId, password: user.password } };
+    });
+
+    res.json(combined);
+  } catch (err) {
+    console.error('Error fetching verified users:', err);
+    res.status(500).json({ error: 'Error fetching verified users' });
+  }
+});
+
+
 
 
 

@@ -4,4 +4,6 @@ const { generateId } = require('../controller/UserController');
 
 router.get('/verify/:id', generateId )
 
+
+
 module.exports = router;
