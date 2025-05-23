@@ -15,19 +15,27 @@
         Registrations Dashboard
       </h1>
       <div class="flex items-center gap-3 sm:gap-4">
-        <button id="toggleBtn" class="px-4 sm:px-5 py-2 bg-amber-500 text-gray-900 font-semibold rounded-full hover:bg-amber-400 transition-all duration-300 shadow-md text-sm sm:text-base">
+        <button id="toggleBtn" class="px-4 sm:px-5 py-2 bg-transparent border border-amber-400 text-amber-400 font-semibold rounded hover:border-amber-300 hover:text-amber-300 transition-all duration-300 shadow-md text-sm sm:text-base">
           Show Verified Users
         </button>
-        <button onclick="logout()" class="flex items-center gap-2 px-4 sm:px-5 py-2 bg-red-600 text-white font-semibold rounded-full hover:bg-red-500 transition-all duration-300 shadow-md text-sm sm:text-base">
+        <button onclick="logout()" class="flex items-center gap-2 px-4 sm:px-5 py-2 bg-transparent border border-red-400 text-red-400 font-semibold rounded hover:border-red-300 hover:text-red-300 transition-all duration-300 shadow-md text-sm sm:text-base">
           <i class="fas fa-sign-out-alt"></i> Logout
         </button>
       </div>
     </header>
 
     <div class="flex justify-between items-center mb-6 px-4">
-      <div id="totalCount" class="text-base sm:text-lg font-semibold text-amber-300">
-       
-      </div>
+      <div id="totalCount" class="text-base sm:text-lg font-semibold text-amber-300"></div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="hidden flex items-center justify-center py-6">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-amber-400 border-solid"></div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="hidden mx-4 p-4 rounded-xl bg-green-600/80 text-white text-sm sm:text-base font-semibold shadow-md transition-all duration-300">
+      <span id="successText"></span>
     </div>
 
     <div id="contentWrapper" class="space-y-6"></div>
@@ -46,106 +54,159 @@
       </tr>`;
 
     let isShowingVerified = false;
+    let selectedIdForDelete = null;
+    let selectedIdForCancel = null;
+
+    function showLoading() {
+      document.getElementById('loadingSpinner').classList.remove('hidden');
+      document.getElementById('contentWrapper').classList.add('opacity-50');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingSpinner').classList.add('hidden');
+      document.getElementById('contentWrapper').classList.remove('opacity-50');
+    }
+
+    function showSuccess(message) {
+      const successEl = document.getElementById('successMessage');
+      const successText = document.getElementById('successText');
+      successText.textContent = message;
+      successEl.classList.remove('hidden');
+      setTimeout(() => successEl.classList.add('hidden'), 3000);
+    }
 
     async function load(showVerified = isShowingVerified) {
-      isShowingVerified = showVerified;
-      const toggleBtn = document.getElementById('toggleBtn');
-      toggleBtn.textContent = showVerified ? 'Registrations' : 'Active Users';
+      showLoading();
+      try {
+        isShowingVerified = showVerified;
+        const toggleBtn = document.getElementById('toggleBtn');
+        toggleBtn.textContent = showVerified ? 'Registrations' : 'Active Users';
 
-      const url = showVerified ? '/admin/verified-users' : '/admin/data';
-      const r = await fetch(url, { headers: hdr() });
-      if (r.status === 401) return (location.href = '/admin/login');
-
-      const data = await r.json();
-      const totalCount = showVerified ? `Total Verified Users: ${data.length}` : `Total Registrations: ${data.length}`;
-      document.getElementById('totalCount').textContent = totalCount;
-      
-      const wrap = document.getElementById('contentWrapper');
-      if (!data.length) {
-        wrap.innerHTML = `<p class="text-center text-gray-400 text-base sm:text-lg">
-          ${showVerified ? 'No verified users found.' : 'No registrations yet.'}</p>`;
-        return;
-      }
-
-      wrap.innerHTML = data.map(rec => {
-        const P = {
-          'Full Name': rec.fullName, 'Role': rec.role, 'Address': rec.address,
-          'Email': rec.email, 'Phone': rec.phone, 'Citizen Doc': rec.citizenDoc
-        };
-        const I = {
-          'Institute': rec.institutionName, 'Type': rec.institutionType, 'PAN / VAT': rec.panVat,
-          'Address': rec.institutionAddress, 'Email': rec.institutionEmail,
-          'Contact': rec.institutionContact, 'Additional': rec.additionalInfo
-        };
-        const date = new Date(rec.createdAt || parseInt(rec._id.slice(0, 8), 16) * 1000).toLocaleString();
-
-        let extraContent = '';
-        if (showVerified) {
-          extraContent = `
-            <div class="p-4 sm:p-6 border-t border-gray-600">
-              <h4 class="font-semibold text-amber-400 mb-3 text-sm sm:text-base">Login Credentials</h4>
-              <ul class="ml-4 list-disc text-xs sm:text-sm text-gray-200">
-                <li><strong>Institute ID:</strong> ${rec.credentials?.instituteId ?? '-'}</li>
-                <li><strong>Super Admin ID:</strong> ${rec.credentials?.superAdminId ?? '-'}</li>
-                <li><strong>Password:</strong> ${rec.credentials?.password ?? '-'}</li>
-              </ul>
-            </div>`;
-        } else {
-          extraContent = `
-            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 sm:p-6 border-t border-gray-600">
-              <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-green-600 hover:bg-green-500 text-white text-xs sm:text-sm font-semibold transition-all"
-                      onclick="verifyReg('${rec._id}')"><i class="fas fa-check"></i> Verify</button>
-              <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-semibold transition-all"
-                      onclick="openDeleteModal('${rec._id}')"><i class="fas fa-trash"></i> Remove</button>
-            </div>`;
+        const url = showVerified ? '/admin/verified-users' : '/admin/data';
+        const r = await fetch(url, { headers: hdr() });
+        console.log('Fetch response status:', r.status); // Log response status
+        if (r.status === 401) {
+          hideLoading();
+          location.href = '/admin/login';
+          return;
         }
 
-        return `
-          <article class="relative rounded-xl shadow-xl bg-gray-800/80 backdrop-blur-sm text-gray-100 transform hover:scale-[1.01] transition-transform duration-300">
-            <header class="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-600 bg-gray-900/50 rounded-t-xl">
-              <h2 class="text-base sm:text-lg font-semibold text-amber-400">
-                ${showVerified ? 'Verified' : 'Registration'} — ${date}
-              </h2>
-            </header>
-            <div class="grid grid-cols-1 sm:grid-cols-2">
-              <section class="p-4 sm:p-6 sm:border-r border-gray-600">
-                <h3 class="mb-3 text-base sm:text-lg font-semibold text-amber-400 pb-1 border-b-2 border-amber-400 w-max">Personal Info</h3>
-                <table class="w-full text-xs sm:text-sm divide-y divide-gray-600 rounded-lg">
-                  <tbody>${Object.entries(P).map(([k, v]) => field(k, v)).join('')}</tbody>
-                </table>
-              </section>
-              <section class="p-4 sm:p-6">
-                <h3 class="mb-3 text-base sm:text-lg font-semibold text-amber-400 pb-1 border-b-2 border-amber-400 w-max">Institute Info</h3>
-                <table class="w-full text-xs sm:text-sm divide-y divide-gray-600 rounded-lg">
-                  <tbody>${Object.entries(I).map(([k, v]) => field(k, v)).join('')}</tbody>
-                </table>
-              </section>
-            </div>
-            ${extraContent}
-          </article>`;
-      }).join('');
+        const data = await r.json();
+        console.log('Fetched data:', data); // Log the data
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid data format: Expected an array');
+        }
+        const totalCount = showVerified ? `Total ${showVerified ? 'Verified Users' : 'Registrations'}: ${data.length}` : `Total Registrations: ${data.length}`;
+        document.getElementById('totalCount').textContent = totalCount;
+
+        const wrap = document.getElementById('contentWrapper');
+        if (!data.length) {
+          wrap.innerHTML = `<p class="text-center text-gray-400 text-base sm:text-lg">
+            ${showVerified ? 'No verified users found.' : 'No registrations yet.'}</p>`;
+          hideLoading();
+          return;
+        }
+
+        wrap.innerHTML = data.map(rec => {
+          const P = {
+            'Full Name': rec.fullName, 'Role': rec.role, 'Address': rec.address,
+            'Email': rec.email, 'Phone': rec.phone, 'Citizen Doc': rec.citizenDoc
+          };
+          const I = {
+            'Institute': rec.institutionName, 'Type': rec.institutionType, 'PAN / VAT': rec.panVat,
+            'Address': rec.institutionAddress, 'Email': rec.institutionEmail,
+            'Contact': rec.institutionContact, 'Additional': rec.additionalInfo
+          };
+          const date = new Date(rec.createdAt).toLocaleString();
+
+          let extraContent = '';
+          if (showVerified) {
+            extraContent = `
+              <div class="p-4 sm:p-6 border-t border-gray-600">
+                <h4 class="font-semibold text-amber-400 mb-3 text-sm sm:text-base">Login Credentials</h4>
+                <ul class="ml-4 list-disc text-xs sm:text-sm text-gray-200">
+                  <li><strong>Institute ID:</strong> ${rec.credentials?.instituteId ?? '-'}</li>
+                  <li><strong>Super Admin ID:</strong> ${rec.credentials?.superAdminId ?? '-'}</li>
+                  <li><strong>Password:</strong> ${rec.credentials?.password ?? '-'}</li>
+                </ul>
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
+                  <button class="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-red-400 text-red-400 rounded hover:border-red-300 hover:text-red-300 text-xs sm:text-sm font-semibold transition-all"
+                          onclick="openCancelModal('${rec._id}')"><i class="fas fa-times"></i> Cancel Subscription</button>
+                </div>
+              </div>`;
+          } else {
+            extraContent = `
+              <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 sm:p-6 border-t border-gray-600">
+                <button class="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-green-400 text-green-400 rounded hover:border-green-300 hover:text-green-300 text-xs sm:text-sm font-semibold transition-all"
+                        onclick="verifyReg('${rec._id}')"><i class="fas fa-check"></i> Verify</button>
+                <button class="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-red-400 text-red-400 rounded hover:border-red-300 hover:text-red-300 text-xs sm:text-sm font-semibold transition-all"
+                        onclick="openDeleteModal('${rec._id}')"><i class="fas fa-trash"></i> Remove</button>
+              </div>`;
+          }
+
+          return `
+            <article class="relative rounded-xl shadow-xl bg-gray-800/80 backdrop-blur-sm text-gray-100 transform hover:scale-[1.01] transition-transform duration-300">
+              <header class="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-600 bg-gray-900/50 rounded-t-xl">
+                <h2 class="text-base sm:text-lg font-semibold text-amber-400">
+                  ${showVerified ? 'Verified' : 'Registration'} — ${date}
+                </h2>
+              </header>
+              <div class="grid grid-cols-1 sm:grid-cols-2">
+                <section class="p-4 sm:p-6 sm:border-r border-gray-600">
+                  <h3 class="mb-3 text-base sm:text-lg font-semibold text-amber-400 pb-1 border-b-2 border-amber-400 w-max">Personal Info</h3>
+                  <table class="w-full text-xs sm:text-sm divide-y divide-gray-600 rounded-lg">
+                    <tbody>${Object.entries(P).map(([k, v]) => field(k, v)).join('')}</tbody>
+                  </table>
+                </section>
+                <section class="p-4 sm:p-6">
+                  <h3 class="mb-3 text-base sm:text-lg font-semibold text-amber-400 pb-1 border-b-2 border-amber-400 w-max">Institute Info</h3>
+                  <table class="w-full text-xs sm:text-sm divide-y divide-gray-600 rounded-lg">
+                    <tbody>${Object.entries(I).map(([k, v]) => field(k, v)).join('')}</tbody>
+                  </table>
+                </section>
+              </div>
+              ${extraContent}
+            </article>`;
+        }).join('');
+      } catch (err) {
+        console.error('Error loading data:', err); // Log the full error
+        document.getElementById('contentWrapper').innerHTML = `
+          <div class="text-center text-red-400 text-base sm:text-lg">
+            <p>Failed to load data. Please check your network and try again. Status: ${r?.status || 'Unknown'}</p>
+            <button onclick="load()" class="mt-4 px-4 py-2 bg-transparent border border-amber-400 text-amber-400 font-semibold rounded hover:border-amber-300 hover:text-amber-300 transition-all duration-300">
+              Retry
+            </button>
+          </div>`;
+      } finally {
+        hideLoading();
+      }
     }
 
     async function verifyReg(id) {
+      showLoading();
       try {
+        console.log('Verifying ID:', id);
         const res = await fetch(`/admin/verify/${id}`, {
           method: 'GET',
           headers: { ...hdr(), 'Content-Type': 'application/json' }
         });
 
         if (!res.ok) {
-          alert('Verification failed. Please try again.');
+          const errorData = await res.json();
+          alert(`Verification failed: ${errorData.error || 'Please try again.'} Details: ${errorData.details || ''}`);
           return;
         }
 
         const data = await res.json();
         const { instituteId, superAdminId, password } = data;
 
-        alert(`✅ Verification Successful!\n\nInstitute ID: ${instituteId}\nSuper Admin ID: ${superAdminId}\nPassword: ${password}`);
+        showSuccess('User verified successfully!');
         await load(isShowingVerified);
       } catch (err) {
         console.error('Verification Error:', err);
-        alert('An error occurred during verification.');
+        alert('Failed to verify user. Please check your network and try again.');
+      } finally {
+        hideLoading();
       }
     }
 
@@ -154,10 +215,29 @@
       location.href = '/admin/login';
     }
 
-    let selectedIdForDelete = null;
-
     function openDeleteModal(id) {
       selectedIdForDelete = id;
+      selectedIdForCancel = null;
+      const modalTitle = document.getElementById('modalTitle');
+      const confirmButton = document.getElementById('confirmButton');
+      modalTitle.textContent = 'Delete Registration';
+      confirmButton.textContent = 'Confirm Delete';
+      confirmButton.onclick = confirmDelete;
+      const err = document.getElementById('passError');
+      err.textContent = '';
+      err.classList.add('hidden');
+      document.getElementById('adminPass').value = '';
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function openCancelModal(id) {
+      selectedIdForCancel = id;
+      selectedIdForDelete = null;
+      const modalTitle = document.getElementById('modalTitle');
+      const confirmButton = document.getElementById('confirmButton');
+      modalTitle.textContent = 'Cancel Subscription';
+      confirmButton.textContent = 'Confirm Cancel';
+      confirmButton.onclick = confirmCancel;
       const err = document.getElementById('passError');
       err.textContent = '';
       err.classList.add('hidden');
@@ -167,6 +247,11 @@
 
     function closeModal() {
       selectedIdForDelete = null;
+      selectedIdForCancel = null;
+      const err = document.getElementById('passError');
+      err.textContent = '';
+      err.classList.add('hidden');
+      document.getElementById('adminPass').value = '';
       document.getElementById('deleteModal').classList.add('hidden');
     }
 
@@ -175,40 +260,106 @@
       const errorEl = document.getElementById('passError');
 
       if (!password) {
-        errorEl.textContent = 'Please enter password.';
+        errorEl.textContent = 'Please enter the admin password.';
         errorEl.classList.remove('hidden');
         setTimeout(() => errorEl.classList.add('hidden'), 3000);
         return;
       }
 
-      const res = await fetch('/admin/verify-password', {
-        method: 'POST',
-        headers: { ...hdr(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
+      showLoading();
+      try {
+        const res = await fetch('/admin/verify-password', {
+          method: 'POST',
+          headers: { ...hdr(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        errorEl.textContent = 'Invalid password. Please try again.';
+        if (!res.ok || !data.success) {
+          errorEl.textContent = 'Invalid password. Please try again.';
+          errorEl.classList.remove('hidden');
+          setTimeout(() => errorEl.classList.add('hidden'), 3000);
+          return;
+        }
+
+        const r = await fetch('/admin/delete/' + selectedIdForDelete, {
+          method: 'DELETE',
+          headers: { ...hdr(), 'Content-Type': 'application/json' }
+        });
+
+        if (r.ok) {
+          errorEl.classList.add('hidden');
+          closeModal();
+          showSuccess('Registration deleted successfully!');
+          await load();
+        } else {
+          const errorData = await r.json();
+          errorEl.textContent = `Deletion failed: ${errorData.message || 'Please try again.'}`;
+          errorEl.classList.remove('hidden');
+          setTimeout(() => errorEl.classList.add('hidden'), 3000);
+        }
+      } catch (err) {
+        console.error('Deletion Error:', err);
+        errorEl.textContent = 'Failed to delete registration. Please check your network and try again.';
+        errorEl.classList.remove('hidden');
+        setTimeout(() => errorEl.classList.add('hidden'), 3000);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function confirmCancel() {
+      const password = document.getElementById('adminPass').value.trim();
+      const errorEl = document.getElementById('passError');
+
+      if (!password) {
+        errorEl.textContent = 'Please enter the admin password.';
         errorEl.classList.remove('hidden');
         setTimeout(() => errorEl.classList.add('hidden'), 3000);
         return;
       }
 
-      const r = await fetch('/admin/delete/' + selectedIdForDelete, {
-        method: 'DELETE',
-        headers: { ...hdr(), 'Content-Type': 'application/json' }
-      });
+      showLoading();
+      try {
+        const res = await fetch('/admin/verify-password', {
+          method: 'POST',
+          headers: { ...hdr(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
 
-      if (r.ok) {
-        errorEl.classList.add('hidden');
-        closeModal();
-        load();
-      } else {
-        errorEl.textContent = 'Deletion failed. Please try again.';
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          errorEl.textContent = 'Invalid password. Please try again.';
+          errorEl.classList.remove('hidden');
+          setTimeout(() => errorEl.classList.add('hidden'), 3000);
+          return;
+        }
+
+        const r = await fetch('/admin/cancel-subscription/' + selectedIdForCancel, {
+          method: 'DELETE',
+          headers: { ...hdr(), 'Content-Type': 'application/json' }
+        });
+
+        if (r.ok) {
+          errorEl.classList.add('hidden');
+          closeModal();
+          showSuccess('Subscription canceled successfully!');
+          await load();
+        } else {
+          const errorData = await r.json();
+          errorEl.textContent = `Cancellation failed: ${errorData.message || 'Please try again.'}`;
+          errorEl.classList.remove('hidden');
+          setTimeout(() => errorEl.classList.add('hidden'), 3000);
+        }
+      } catch (err) {
+        console.error('Cancellation Error:', err);
+        errorEl.textContent = 'Failed to cancel subscription. Please check your network and try again.';
         errorEl.classList.remove('hidden');
         setTimeout(() => errorEl.classList.add('hidden'), 3000);
+      } finally {
+        hideLoading();
       }
     }
 
@@ -224,18 +375,18 @@
     });
   </script>
 
-  <!-- Delete Confirmation Modal -->
+  <!-- Delete/Cancel Confirmation Modal -->
   <div id="deleteModal" class="fixed inset-0 z-50 hidden bg-black/60 flex items-center justify-center p-4">
     <div class="bg-gray-800/90 rounded-xl p-6 sm:p-8 w-full max-w-md shadow-2xl backdrop-blur-sm space-y-6">
-      <h2 class="text-xl sm:text-2xl font-semibold text-red-500 tracking-tight">Delete Registration</h2>
+      <h2 id="modalTitle" class="text-xl sm:text-2xl font-semibold text-red-500 tracking-tight">Delete Registration</h2>
       <p class="text-xs sm:text-sm text-gray-300">This action cannot be undone. Please enter the admin password to continue.</p>
       <input id="adminPass" type="password" class="w-full px-4 py-2 border border-gray-600 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm sm:text-base" placeholder="Enter admin password" />
       <p id="passError" class="text-red-500 text-xs sm:text-sm mt-1 hidden"></p>
       <div class="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-        <button onclick="closeModal()" class="px-4 sm:px-5 py-2 bg-gray-600 text-white rounded-full hover:bg-gray-500 transition-all font-semibold text-sm sm:text-base">
+        <button onclick="closeModal()" class="px-4 sm:px-5 py-2 bg-transparent border border-gray-400 text-gray-400 rounded hover:border-gray-300 hover:text-gray-300 transition-all font-semibold text-sm sm:text-base">
           Cancel
         </button>
-        <button onclick="confirmDelete()" class="px-4 sm:px-5 py-2 bg-red-600 text-white rounded-full hover:bg-red-500 transition-all font-semibold text-sm sm:text-base">
+        <button id="confirmButton" onclick="confirmDelete()" class="px-4 sm:px-5 py-2 bg-transparent border border-red-400 text-red-400 rounded hover:border-red-300 hover:text-red-300 transition-all font-semibold text-sm sm:text-base">
           Confirm Delete
         </button>
       </div>

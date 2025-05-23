@@ -1,4 +1,3 @@
-
 require('dotenv').config();              // Load .env FIRST
 
 const express   = require('express');
@@ -9,8 +8,6 @@ const path      = require('path');
 const verifyRoute = require('./routes/verifyRoute');
 const Registration = require('./models/Registration');
 const ActiveUser = require('./models/ActiveUser');
-
-
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -24,12 +21,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/admin', verifyRoute);
 const adminAuth = basicAuth({
-  users : {
+  users: {
     [process.env.ADMIN_USERNAME || 'admin']:
       process.env.ADMIN_PASSWORD || 'password123'
   },
   unauthorizedResponse: () => 'Unauthorized'   // still returns 401
-  /* challenge:false  <-- default, so omit */
 });
 
 /* ─────────────────────────── ROOT ROUTE ──────────────────────────── */
@@ -58,9 +54,11 @@ app.get('/admin/login', (_req, res) =>
 app.get('/admin/registrations', (_req, res) =>
   res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'))
 );
+
 /* ───────────────────── DELETE REGISTRATION ───────────────────── */
 app.delete('/admin/delete/:id', adminAuth, async (req, res) => {
   const { id } = req.params;
+  console.log('Attempting to delete registration with ID:', id);
   try {
     const deleted = await Registration.findByIdAndDelete(id);
     if (!deleted) {
@@ -73,10 +71,29 @@ app.delete('/admin/delete/:id', adminAuth, async (req, res) => {
     res.status(500).json({ message: 'Server error during deletion' });
   }
 });
+
+/* ───────────────────── DELETE ACTIVE USER (CANCEL SUBSCRIPTION) ───────────────────── */
+app.delete('/admin/cancel-subscription/:id', adminAuth, async (req, res) => {
+  const { id } = req.params;
+  console.log('Attempting to cancel subscription with ID:', id);
+  try {
+    const deleted = await ActiveUser.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Active user not found' });
+    }
+    console.log(`🗑️ Canceled subscription for active user with ID: ${id}`);
+    res.json({ message: 'Subscription canceled successfully' });
+  } catch (err) {
+    console.error('❌ Error canceling subscription:', err);
+    res.status(500).json({ message: 'Server error during cancellation' });
+  }
+});
+
 /* ──────────────────────── ADMIN AUTHENTICATION ───────────────────── */
 app.post('/admin/verify-password', (req, res) => {
   const input = req.body.password;
   const adminPass = process.env.ADMIN_PASSWORD;
+  console.log('Verifying password:', input);
 
   if (input === adminPass) {
     res.json({ success: true });
@@ -85,8 +102,6 @@ app.post('/admin/verify-password', (req, res) => {
   }
 });
 
-
-
 /* ───────────────────── PROTECTED DATA ENDPOINT ───────────────────── */
 app.get('/admin/data', async (req, res) => {
   try {
@@ -94,13 +109,13 @@ app.get('/admin/data', async (req, res) => {
     const allRegistrations = await Registration.find().lean();
 
     // Step 2: Get list of all verified registration IDs
-    const activeUsers = await ActiveUser.find({}, 'linkedRegistrationId'); // only fetch IDs
+    const activeUsers = await ActiveUser.find({}, 'linkedRegistrationId');
     const verifiedIds = new Set(activeUsers.map(user => user.linkedRegistrationId.toString()));
 
     // Step 3: Filter out registrations that are already verified
     const unverified = allRegistrations.filter(reg => !verifiedIds.has(reg._id.toString()));
 
-    res.json(unverified); // return only unverified registrations
+    res.json(unverified);
   } catch (err) {
     console.error('Error fetching admin data:', err);
     res.status(500).json({ error: 'Error fetching registrations' });
@@ -108,43 +123,23 @@ app.get('/admin/data', async (req, res) => {
 });
 
 /* ──────────────────────── VERIFIED USERS LIST ───────────────────── */
-
 app.get('/admin/verified-users', async (req, res) => {
   try {
     const activeUsers = await ActiveUser.find().lean();
-    const ids = activeUsers.map(user => user.linkedRegistrationId);
-    const registrations = await Registration.find({ _id: { $in: ids } }).lean();
-
-    const combined = activeUsers.map(user => {
-      const reg = registrations.find(r => r._id.toString() === user.linkedRegistrationId.toString());
-      if (!reg) {
-        return { ...user, missing: true, message: 'Original registration not found' };
+    const combined = activeUsers.map(user => ({
+      ...user,
+      credentials: {
+        instituteId: user.instituteId,
+        superAdminId: user.superAdminId,
+        password: user.password
       }
-      return { ...reg, credentials: { instituteId: user.instituteId, superAdminId: user.superAdminId, password: user.password } };
-    });
-
+    }));
     res.json(combined);
   } catch (err) {
     console.error('Error fetching verified users:', err);
     res.status(500).json({ error: 'Error fetching verified users' });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* ───────────── MONGODB CONNECTION & SERVER STARTUP ───────────────── */
 const uri = process.env.MONGO_URI;
