@@ -56,6 +56,7 @@
     let isShowingVerified = false;
     let selectedIdForDelete = null;
     let selectedIdForCancel = null;
+    let selectedIdForVerify = null;
 
     function showLoading() {
       document.getElementById('loadingSpinner').classList.remove('hidden');
@@ -84,7 +85,7 @@
 
         const url = showVerified ? '/admin/verified-users' : '/admin/data';
         const r = await fetch(url, { headers: hdr() });
-        console.log('Fetch response status:', r.status); // Log response status
+        console.log('Fetch response status:', r.status);
         if (r.status === 401) {
           hideLoading();
           location.href = '/admin/login';
@@ -92,7 +93,7 @@
         }
 
         const data = await r.json();
-        console.log('Fetched data:', data); // Log the data
+        console.log('Fetched data:', data);
         if (!Array.isArray(data)) {
           throw new Error('Invalid data format: Expected an array');
         }
@@ -130,6 +131,8 @@
                   <li><strong>Password:</strong> ${rec.credentials?.password ?? '-'}</li>
                 </ul>
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
+                  <button class="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-blue-400 text-blue-400 rounded hover:border-blue-300 hover:text-blue-300 text-xs sm:text-sm font-semibold transition-all"
+                          onclick="sendCredentials('${rec._id}', '${rec.email}')"><i class="fas fa-envelope"></i> Send Credentials</button>
                   <button class="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-red-400 text-red-400 rounded hover:border-red-300 hover:text-red-300 text-xs sm:text-sm font-semibold transition-all"
                           onclick="openCancelModal('${rec._id}')"><i class="fas fa-times"></i> Cancel Subscription</button>
                 </div>
@@ -138,7 +141,7 @@
             extraContent = `
               <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 sm:p-6 border-t border-gray-600">
                 <button class="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-green-400 text-green-400 rounded hover:border-green-300 hover:text-green-300 text-xs sm:text-sm font-semibold transition-all"
-                        onclick="verifyReg('${rec._id}')"><i class="fas fa-check"></i> Verify</button>
+                        onclick="openVerifyModal('${rec._id}')"><i class="fas fa-check"></i> Verify</button>
                 <button class="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-red-400 text-red-400 rounded hover:border-red-300 hover:text-red-300 text-xs sm:text-sm font-semibold transition-all"
                         onclick="openDeleteModal('${rec._id}')"><i class="fas fa-trash"></i> Remove</button>
               </div>`;
@@ -169,7 +172,7 @@
             </article>`;
         }).join('');
       } catch (err) {
-        console.error('Error loading data:', err); // Log the full error
+        console.error('Error loading data:', err);
         document.getElementById('contentWrapper').innerHTML = `
           <div class="text-center text-red-400 text-base sm:text-lg">
             <p>Failed to load data. Please check your network and try again. Status: ${r?.status || 'Unknown'}</p>
@@ -198,13 +201,91 @@
         }
 
         const data = await res.json();
-        const { instituteId, superAdminId, password } = data;
-
         showSuccess('User verified successfully!');
         await load(isShowingVerified);
       } catch (err) {
         console.error('Verification Error:', err);
         alert('Failed to verify user. Please check your network and try again.');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function openVerifyModal(id) {
+      selectedIdForVerify = id;
+      selectedIdForDelete = null;
+      selectedIdForCancel = null;
+      const modalTitle = document.getElementById('modalTitle');
+      const confirmButton = document.getElementById('confirmButton');
+      modalTitle.textContent = 'Verify Registration';
+      confirmButton.textContent = 'Confirm Verify';
+      confirmButton.onclick = confirmVerify;
+      const err = document.getElementById('passError');
+      err.textContent = '';
+      err.classList.add('hidden');
+      document.getElementById('adminPass').value = '';
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    async function confirmVerify() {
+      const password = document.getElementById('adminPass').value.trim();
+      const errorEl = document.getElementById('passError');
+
+      if (!password) {
+        errorEl.textContent = 'Please enter the admin password.';
+        errorEl.classList.remove('hidden');
+        setTimeout(() => errorEl.classList.add('hidden'), 3000);
+        return;
+      }
+
+      showLoading();
+      try {
+        const res = await fetch('/admin/verify-password', {
+          method: 'POST',
+          headers: { ...hdr(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          errorEl.textContent = 'Invalid password. Please try again.';
+          errorEl.classList.remove('hidden');
+          setTimeout(() => errorEl.classList.add('hidden'), 3000);
+          return;
+        }
+
+        await verifyReg(selectedIdForVerify);
+        closeModal();
+      } catch (err) {
+        console.error('Password verification error:', err);
+        errorEl.textContent = 'Failed to verify password. Please try again.';
+        errorEl.classList.remove('hidden');
+        setTimeout(() => errorEl.classList.add('hidden'), 3000);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function sendCredentials(id, email) {
+      showLoading();
+      try {
+        const res = await fetch(`/admin/send-credentials`, {
+          method: 'POST',
+          headers: { ...hdr(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, email })
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          alert(`Failed to send credentials: ${errorData.error || 'Please try again.'}`);
+          return;
+        }
+
+        showSuccess('Credentials sent to email successfully!');
+      } catch (err) {
+        console.error('Send credentials error:', err);
+        alert('Failed to send credentials. Please check your network and try again.');
       } finally {
         hideLoading();
       }
@@ -218,6 +299,7 @@
     function openDeleteModal(id) {
       selectedIdForDelete = id;
       selectedIdForCancel = null;
+      selectedIdForVerify = null;
       const modalTitle = document.getElementById('modalTitle');
       const confirmButton = document.getElementById('confirmButton');
       modalTitle.textContent = 'Delete Registration';
@@ -233,6 +315,7 @@
     function openCancelModal(id) {
       selectedIdForCancel = id;
       selectedIdForDelete = null;
+      selectedIdForVerify = null;
       const modalTitle = document.getElementById('modalTitle');
       const confirmButton = document.getElementById('confirmButton');
       modalTitle.textContent = 'Cancel Subscription';
@@ -248,6 +331,7 @@
     function closeModal() {
       selectedIdForDelete = null;
       selectedIdForCancel = null;
+      selectedIdForVerify = null;
       const err = document.getElementById('passError');
       err.textContent = '';
       err.classList.add('hidden');
@@ -375,19 +459,19 @@
     });
   </script>
 
-  <!-- Delete/Cancel Confirmation Modal -->
+  <!-- Delete/Cancel/Verify Confirmation Modal -->
   <div id="deleteModal" class="fixed inset-0 z-50 hidden bg-black/60 flex items-center justify-center p-4">
     <div class="bg-gray-800/90 rounded-xl p-6 sm:p-8 w-full max-w-md shadow-2xl backdrop-blur-sm space-y-6">
-      <h2 id="modalTitle" class="text-xl sm:text-2xl font-semibold text-red-500 tracking-tight">Delete Registration</h2>
-      <p class="text-xs sm:text-sm text-gray-300">This action cannot be undone. Please enter the admin password to continue.</p>
+      <h2 id="modalTitle" class="text-xl sm:text-2xl font-semibold text-green-500 tracking-tight">Verify Registration</h2>
+      <p class="text-xs sm:text-sm text-gray-300">Please enter the admin password to verify this registration.</p>
       <input id="adminPass" type="password" class="w-full px-4 py-2 border border-gray-600 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm sm:text-base" placeholder="Enter admin password" />
       <p id="passError" class="text-red-500 text-xs sm:text-sm mt-1 hidden"></p>
       <div class="flex flex-col sm:flex-row justify-end gap-3 mt-6">
         <button onclick="closeModal()" class="px-4 sm:px-5 py-2 bg-transparent border border-gray-400 text-gray-400 rounded hover:border-gray-300 hover:text-gray-300 transition-all font-semibold text-sm sm:text-base">
           Cancel
         </button>
-        <button id="confirmButton" onclick="confirmDelete()" class="px-4 sm:px-5 py-2 bg-transparent border border-red-400 text-red-400 rounded hover:border-red-300 hover:text-red-300 transition-all font-semibold text-sm sm:text-base">
-          Confirm Delete
+        <button id="confirmButton" onclick="confirmDelete()" class="px-4 sm:px-5 py-2 bg-transparent border border-green-400 text-green-400 rounded hover:border-green-300 hover:text-green-300 transition-all font-semibold text-sm sm:text-base">
+          Confirm Verify
         </button>
       </div>
     </div>

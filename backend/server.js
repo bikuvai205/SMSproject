@@ -1,18 +1,19 @@
-require('dotenv').config();              // Load .env FIRST
+require('dotenv').config(); // Load .env FIRST
 
-const express   = require('express');
-const mongoose  = require('mongoose');
-const cors      = require('cors');
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const basicAuth = require('express-basic-auth');
-const path      = require('path');
+const path = require('path');
+const nodemailer = require('nodemailer'); // Added for email sending
 const verifyRoute = require('./routes/verifyRoute');
 const Registration = require('./models/Registration');
 const ActiveUser = require('./models/ActiveUser');
 
-const app  = express();
+const app = express();
 const PORT = process.env.PORT || 5000;
 
-/* ──────────────────────────── MIDDLEWARE ─────────────────────────── */
+/* ──────────────────────────── MIDDLEWARE ──────────────────────────── */
 app.use(cors());
 app.use(express.json());
 
@@ -22,10 +23,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', verifyRoute);
 const adminAuth = basicAuth({
   users: {
-    [process.env.ADMIN_USERNAME || 'admin']:
-      process.env.ADMIN_PASSWORD || 'password123'
+    [process.env.ADMIN_USERNAME || 'admin']: process.env.ADMIN_PASSWORD || 'password123',
   },
-  unauthorizedResponse: () => 'Unauthorized'   // still returns 401
+  unauthorizedResponse: () => 'Unauthorized', // still returns 401
+});
+
+/* ──────────────────────────── EMAIL SETUP ──────────────────────────── */
+// Configure Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // You can use other services (e.g., SendGrid, Outlook)
+  auth: {
+    user: process.env.EMAIL_USER, // Your email address (from .env)
+    pass: process.env.EMAIL_PASS, // Your app-specific password (from .env)
+  },
 });
 
 /* ─────────────────────────── ROOT ROUTE ──────────────────────────── */
@@ -131,13 +141,48 @@ app.get('/admin/verified-users', async (req, res) => {
       credentials: {
         instituteId: user.instituteId,
         superAdminId: user.superAdminId,
-        password: user.password
-      }
+        password: user.password,
+      },
     }));
     res.json(combined);
   } catch (err) {
     console.error('Error fetching verified users:', err);
     res.status(500).json({ error: 'Error fetching verified users' });
+  }
+});
+
+/* ───────────────────── SEND CREDENTIALS VIA EMAIL ───────────────────── */
+app.post('/admin/send-credentials', adminAuth, async (req, res) => {
+  const { id, email } = req.body;
+
+  try {
+    // Fetch active user data from MongoDB (ActiveUser contains the credentials)
+    const user = await ActiveUser.findById(id).lean();
+    if (!user) {
+      return res.status(404).json({ error: 'Active user not found' });
+    }
+
+    const { instituteId, superAdminId, password } = user;
+
+    // Validate credentials existence
+    if (!instituteId || !superAdminId || !password) {
+      return res.status(400).json({ error: 'Credentials missing for this user' });
+    }
+
+    // Send email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Your Login Credentials',
+      text: `Hello,\n\nYour login credentials are:\nInstitute ID: ${instituteId}\nSuper Admin ID: ${superAdminId}\nPassword: ${password}\n\nRegards,\nAdmin Team`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`📧 Credentials sent to ${email} for user ID: ${id}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('❌ Email sending error:', err);
+    res.status(500).json({ error: 'Failed to send email' });
   }
 });
 
