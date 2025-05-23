@@ -34,6 +34,7 @@ const activeUserSchema = new mongoose.Schema({
   institutionContact: { type: String, required: true },
   institutionType: { type: String, required: true },
   additionalInfo: { type: String },
+  credentialsSent: { type: Boolean, default: false },
   createdAt: {
     type: Date,
     default: Date.now,

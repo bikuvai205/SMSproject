@@ -133,6 +133,7 @@ app.get('/admin/data', async (req, res) => {
 });
 
 /* ──────────────────────── VERIFIED USERS LIST ───────────────────── */
+
 app.get('/admin/verified-users', async (req, res) => {
   try {
     const activeUsers = await ActiveUser.find().lean();
@@ -143,6 +144,7 @@ app.get('/admin/verified-users', async (req, res) => {
         superAdminId: user.superAdminId,
         password: user.password,
       },
+      credentialsSent: user.credentialsSent, // Add this line
     }));
     res.json(combined);
   } catch (err) {
@@ -152,36 +154,53 @@ app.get('/admin/verified-users', async (req, res) => {
 });
 
 /* ───────────────────── SEND CREDENTIALS VIA EMAIL ───────────────────── */
+/* ───────────────────── SEND CREDENTIALS VIA EMAIL ───────────────────── */
 app.post('/admin/send-credentials', adminAuth, async (req, res) => {
   const { id, email } = req.body;
+  console.log('Attempting to send credentials - ID:', id, 'Email:', email);
 
   try {
-    // Fetch active user data from MongoDB (ActiveUser contains the credentials)
+    // Fetch active user data from MongoDB
     const user = await ActiveUser.findById(id).lean();
     if (!user) {
+      console.log('User not found for ID:', id);
       return res.status(404).json({ error: 'Active user not found' });
     }
 
-    const { instituteId, superAdminId, password } = user;
+    // Check if credentials were already sent
+    if (user.credentialsSent) {
+      console.log('Credentials already sent for user ID:', id);
+      return res.status(400).json({ error: 'Credentials have already been sent' });
+    }
 
-    // Validate credentials existence
+    const { instituteId, superAdminId, password } = user;
     if (!instituteId || !superAdminId || !password) {
+      console.log('Missing credentials for user ID:', id);
       return res.status(400).json({ error: 'Credentials missing for this user' });
     }
 
-    // Send email
+    // Fetch the full name from the linked Registration
+    const registration = await Registration.findById(user.linkedRegistrationId).lean();
+    console.log('Linked Registration ID:', user.linkedRegistrationId, 'Found Registration:', registration);
+    const fullName = registration ? registration.fullName : 'User'; // Fallback to 'User' if not found
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Your Login Credentials',
-      text: `Hello,\n\nYour login credentials are:\nInstitute ID: ${instituteId}\nSuper Admin ID: ${superAdminId}\nPassword: ${password}\n\nRegards,\nAdmin Team`,
+      text: `Hi ${fullName},\n\nYour login credentials are:\nInstitute ID: ${instituteId}\nSuper Admin ID: ${superAdminId}\nPassword: ${password}\n\nRegards,\nAdmin Team`,
     };
 
+    console.log('Sending email with options:', mailOptions);
     await transporter.sendMail(mailOptions);
     console.log(`📧 Credentials sent to ${email} for user ID: ${id}`);
+
+    // Mark credentials as sent
+    await ActiveUser.findByIdAndUpdate(id, { credentialsSent: true });
+
     res.json({ success: true });
   } catch (err) {
-    console.error('❌ Email sending error:', err);
+    console.error('❌ Email sending error:', err.message, 'Stack:', err.stack);
     res.status(500).json({ error: 'Failed to send email' });
   }
 });
