@@ -9,6 +9,7 @@ const nodemailer = require('nodemailer'); // Added for email sending
 const verifyRoute = require('./routes/verifyRoute');
 const Registration = require('./models/Registration');
 const ActiveUser = require('./models/ActiveUser');
+const loginRoute = require('./routes/loginRoute'); // Import the login route
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/admin', verifyRoute);
+app.use('/api', loginRoute); // Use the login route for API requests
 const adminAuth = basicAuth({
   users: {
     [process.env.ADMIN_USERNAME || 'admin']: process.env.ADMIN_PASSWORD || 'password123',
@@ -211,6 +213,7 @@ if (!uri) {
   console.error('MONGO_URI not found in .env');
   process.exit(1);
 }
+
 
 mongoose.connect(uri)
   .then(() => {
