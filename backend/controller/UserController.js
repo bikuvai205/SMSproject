@@ -1,4 +1,7 @@
+import ActiveUser from '../models/ActiveUser.js';
+
 export async function generateId(req, res)  {
+
   try {
     const regId = req.params.id;
 
